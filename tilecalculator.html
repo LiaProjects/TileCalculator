@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tile Calculator</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin-left: 20px; }
+        input, select, button { margin: 10px 5px; padding: 8px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f4f4f4; }
+        .result { font-weight: bold; margin-top: 20px; }
+        .addRowBtn { cursor: pointer; color: green; font-size: 18px; font-weight: bold; }
+        .removeRowBtn { cursor: pointer; color: red; font-size: 18px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Υπολογιστής Πλακιδίων</h2>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>Ύψος (m)</th>
+                    <th>Πλάτος (m)</th>
+                    <th>Διάσταση πλακιδίου (cm)</th>
+                    <th>Ποσότητα</th>
+                    <th>Πακετοποίηση (m²)</th>
+                    <th>Τετραγωνικά μέτρα</th>
+                    <th>Προσαρμοσμένα Τετραγωνικά Μέτρα</th>
+                    <th>Τεμάχια Πλακιδίων</th>
+                    <th>Τεμάχια ανά πακέτο</th>
+                    <th>Πακέτα</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="tileTable">
+                <tr>
+                    <td><input type="number" class="height" step="0.01"></td>
+                    <td><input type="number" class="width" step="0.01"></td>
+                    <td>
+                        <select class="tileSize">
+                            <option value="20x20">20x20</option>
+                            <option value="30x30">30x30</option>
+                            <option value="40x40">40x40</option>
+                            <option value="60x120">60x120</option>
+                        </select>
+                    </td>
+                    <td><input type="number" class="quantity"></td>
+                    <td><input type="number" class="packageSize" step="0.01"></td>
+                    <td class="squareMeters">0.00</td>
+                    <td class="adjustedSquareMeters">0.00</td>
+                    <td class="tilesNeeded">0</td>
+                    <td class="tilesPerPackage">0</td>
+                    <td class="packagesNeeded">0</td>
+                    <td><span class="addRowBtn" onclick="addRow()">+</span></td>
+                </tr>
+            </tbody>
+        </table>
+        
+        <div class="stokos">
+        <label> Χιλιοστά στόκου: </label>
+        <input type="number" id="stokos" value="0.00">
+        </div>
+        
+        <div class="result" id="totalOutput"></div>
+    </div>
+
+    <script>
+        // Function to add a new row
+        function addRow() {
+            let table = document.getElementById('tileTable');
+            let row = table.insertRow();
+            row.innerHTML = `
+                <td><input type="number" class="height" step="0.01"></td>
+                <td><input type="number" class="width" step="0.01"></td>
+                <td>
+                    <select class="tileSize">
+                        <option value="20x20">20x20</option>
+                        <option value="30x30">30x30</option>
+                        <option value="40x40">40x40</option>
+                        <option value="60x120">60x120</option>
+                    </select>
+                </td>
+                <td><input type="number" class="quantity"></td>
+                <td><input type="number" class="packageSize" step="0.01" value="0"></td>
+                <td class="squareMeters">0.00</td>
+                <td class="adjustedSquareMeters">0.00</td>
+                <td class="tilesNeeded">0</td>
+                <td class="tilesPerPackage">0</td>
+                <td class="packagesNeeded">0</td>
+                <td>
+                    <span class="removeRowBtn" onclick="removeRow(this)">X</span>
+                    <span class="addRowBtn" onclick="addRow()">+</span>
+                </td>
+            `;
+            addEventListeners(); // Reattach event listeners for new row inputs
+        }
+
+        // Function to remove a row
+        function removeRow(button) {
+            let row = button.closest('tr');
+            row.remove();
+            calculateTiles(); // Recalculate the remaining rows
+        }
+
+        // Function to add event listeners to inputs of each row
+        function addEventListeners() {
+            let rows = document.querySelectorAll('#tileTable tr');
+            rows.forEach(row => {
+                row.querySelectorAll('input, select').forEach(input => {
+                    input.addEventListener('input', calculateTiles);
+                });
+            });
+        }
+
+        // Function to calculate tiles for each row
+        function calculateTiles() {
+            let rows = document.querySelectorAll('#tileTable tr');
+            let totalSquareMeters = {};
+            let totalReceptors = {} ;
+            let totalGlue = 0 ;
+            let totalCrosses = 0 ;
+            let totalStokos = 0 ;
+            let stokosInput = document.getElementById('stokos');
+            let stokos = parseFloat(stokosInput.value) || 0;
+            console.log("Stokos Value:", stokos); 
+            let receptorsPerSquareMeter = 0;
+            let receptorsNeeded = 0 ;
+            let totalSfines= 0;
+                 
+
+            rows.forEach(row => {
+                let height = parseFloat(row.querySelector('.height').value) || 0;
+                let width = parseFloat(row.querySelector('.width').value) || 0;
+                let quantity = parseInt(row.querySelector('.quantity').value) || 0;
+                let tileSize = row.querySelector('.tileSize').value;
+                let packageSize = parseFloat(row.querySelector('.packageSize').value) || 0;
+
+                let tileArea = height * width; 
+                let rowSquareMeters = quantity * tileArea; 
+                row.querySelector('.squareMeters').innerText = rowSquareMeters.toFixed(2);
+
+                // Adjust square meters based on tile dimension
+                let adjustedSquareMeters = rowSquareMeters;
+                if (tileSize === "20x20") {
+                    adjustedSquareMeters *= 1.10; // Add 10%
+                } else if (tileSize === "30x30" || tileSize === "40x40" || tileSize === "60x120") {
+                    adjustedSquareMeters *= 1.15; // Add 15%
+                }
+                row.querySelector('.adjustedSquareMeters').innerText = adjustedSquareMeters.toFixed(2);
+
+                if (tileSize === "30x30") {
+                       receptorsPerSquareMeter = 44;
+                    } else if (tileSize === "40x40") {
+                      receptorsPerSquareMeter = 25;
+                    } else if (tileSize === "60x120") {
+                      receptorsPerSquareMeter = 11;
+                    } else if (tileSize === "20x20") {
+                      receptorsPerSquareMeter = 50;
+                    }
+
+
+                console.log("adjustedSquareMeters:", adjustedSquareMeters);
+                console.log("receptorsPerSquareMeter:", receptorsPerSquareMeter);  
+
+                receptorsNeeded = (adjustedSquareMeters * receptorsPerSquareMeter)/200;
+
+
+                // New calculation for tiles and packages if package m² is provided
+                if (packageSize > 0) {
+                    let [tileWidth, tileHeight] = tileSize.split('x').map(val => parseFloat(val) / 100);
+                    let areaOfTile = tileWidth * tileHeight;
+
+                    // Find the number of tiles needed for this row
+                    let numheight = Math.ceil((height / tileHeight));
+                    let numwidth = Math.ceil((width / tileWidth));
+                    let numTiles = numheight * numwidth;
+                    row.querySelector('.tilesNeeded').innerText = numTiles;
+
+                    // Calculate number of tiles per package
+                    let tilesPerPackage = Math.floor(packageSize / areaOfTile);
+                    row.querySelector('.tilesPerPackage').innerText = tilesPerPackage;
+
+                    // Find the number of packages needed
+                    let numPackages = Math.ceil(numTiles / tilesPerPackage);
+                    row.querySelector('.packagesNeeded').innerText = numPackages;
+
+                    // Calculate the total square meters for this tile dimension
+                    let totalPackageSquareMeters = numPackages * packageSize;
+                    adjustedSquareMeters = totalPackageSquareMeters;
+
+
+                    row.querySelector('.adjustedSquareMeters').innerText = totalPackageSquareMeters.toFixed(2);
+
+                }
+                
+                totalGlue += (adjustedSquareMeters *7 ) ;
+                totalCrosses += Math.ceil((adjustedSquareMeters/ 50 ) );
+                let stokosCalculation = (adjustedSquareMeters * stokos);
+               // console.log("Stokos Calculation for Row:", stokosCalculation); 
+                totalStokos += stokosCalculation; 
+
+                  // **Store receptors total per tile size**
+                  if (!totalReceptors[tileSize]) {
+                         totalReceptors[tileSize] = 0;
+                      }
+                     totalReceptors[tileSize] += receptorsNeeded;
+                   
+                     totalSfines += Math.ceil(receptorsNeeded) ;  
+
+
+
+                // Store totals by dimension
+                if (!totalSquareMeters[tileSize]) {
+                    totalSquareMeters[tileSize] = 0;
+                }
+                totalSquareMeters[tileSize] += adjustedSquareMeters;
+
+            });
+
+            
+            // Display totals
+            let totalOutput = "<h3>Συνολικά τμ ανά διάσταση:</h3>";
+            for (let tileSize in totalSquareMeters) {
+                totalOutput += `<p>${tileSize}: ${totalSquareMeters[tileSize].toFixed(2)} m²</p>`;
+            } 
+              
+               totalOutput += `<h3>Υποδοχείς ανά διάσταση: </h3>`;
+            for (let tileSize in totalReceptors) {
+              totalOutput += `<p>${tileSize}: ${Math.ceil(totalReceptors[tileSize])} σακουλάκια</p>`;
+            }  
+               totalOutput += `<h3>Παρελκόμενα: </h3>`;
+               totalOutput += `<p>Σφήνες : ${totalSfines} σακουλάκια</p>`;
+               totalOutput += `<p>Κόλλα : ${totalGlue} kg</p>`;
+               totalOutput += `<p>Σταυροί : ${totalCrosses} σακουλάκια</p>`;
+               totalOutput += `<p>Στόκος : ${totalStokos} kg</p>`;
+               document.getElementById('totalOutput').innerHTML = totalOutput;
+
+        }
+
+        // Initialize the first row with event listeners
+        addEventListeners();
+    </script>
+</body>
+</html>
