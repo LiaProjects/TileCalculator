@@ -27,9 +27,12 @@
                     <th>Πλάτος (m)</th>
                     <th>Διάσταση πλακιδίου (cm)</th>
                     <th>Ποσότητα</th>
-                    <th>Πακετοποίηση (m²)</th>
+                   
+                    <th>Τύπος</th>
+                    <th>Χιλιοστά Στόκου</th>
                     <th>Τετραγωνικά μέτρα</th>
                     <th>Προσαρμοσμένα Τετραγωνικά Μέτρα</th>
+                    <th>Στόκος (kg)</th>
                     <th>Τεμάχια Πλακιδίων</th>
                     <th>Τεμάχια ανά πακέτο</th>
                     <th>Πακέτα</th>
@@ -49,9 +52,17 @@
                         </select>
                     </td>
                     <td><input type="number" class="quantity"></td>
-                    <td><input type="number" class="packageSize" step="0.01"></td>
+                   
+                    <td>
+                        <select class="floorwall">
+                            <option value="wall">Τοίχος</option>
+                            <option value="floor" selected>Δάπεδο</option> 
+                        </select>
+                    </td>
+                    <td><input type="number" class="stokos" step="0.01"></td>
                     <td class="squareMeters">0.00</td>
                     <td class="adjustedSquareMeters">0.00</td>
+                    <td class="rowStokos">0.00</td>
                     <td class="tilesNeeded">0</td>
                     <td class="tilesPerPackage">0</td>
                     <td class="packagesNeeded">0</td>
@@ -59,11 +70,7 @@
                 </tr>
             </tbody>
         </table>
-        
-        <div class="stokos">
-        <label> Χιλιοστά στόκου: </label>
-        <input type="number" id="stokos" value="0.00">
-        </div>
+      
         
         <div class="result" id="totalOutput"></div>
     </div>
@@ -85,9 +92,17 @@
                     </select>
                 </td>
                 <td><input type="number" class="quantity"></td>
-                <td><input type="number" class="packageSize" step="0.01" value="0"></td>
+      
+                <td>
+                        <select class="floorwall">
+                            <option value="floor" selected>Δάπεδο</option> 
+                            <option value="wall">Τοίχος</option>
+                        </select>
+                 </td>
+                <td><input type="number" class="stokos" step="0.01"></td>
                 <td class="squareMeters">0.00</td>
                 <td class="adjustedSquareMeters">0.00</td>
+                <td class="rowStokos">0.00</td>
                 <td class="tilesNeeded">0</td>
                 <td class="tilesPerPackage">0</td>
                 <td class="packagesNeeded">0</td>
@@ -113,6 +128,7 @@
                 row.querySelectorAll('input, select').forEach(input => {
                     input.addEventListener('input', calculateTiles);
                 });
+      
             });
         }
 
@@ -124,9 +140,9 @@
             let totalGlue = 0 ;
             let totalCrosses = 0 ;
             let totalStokos = 0 ;
-            let stokosInput = document.getElementById('stokos');
-            let stokos = parseFloat(stokosInput.value) || 0;
-            console.log("Stokos Value:", stokos); 
+            //let stokosInput = document.getElementById('stokos');
+            //let stokos = parseFloat(stokosInput.value) || 0;
+            //console.log("Stokos Value:", stokos); 
             let receptorsPerSquareMeter = 0;
             let receptorsNeeded = 0 ;
             let totalSfines= 0;
@@ -137,7 +153,12 @@
                 let width = parseFloat(row.querySelector('.width').value) || 0;
                 let quantity = parseInt(row.querySelector('.quantity').value) || 0;
                 let tileSize = row.querySelector('.tileSize').value;
-                let packageSize = parseFloat(row.querySelector('.packageSize').value) || 0;
+                //let packageSize = parseFloat(row.querySelector('.packageSize').value) || 0;
+                let stokos = parseFloat(row.querySelector('.stokos').value) || 0;
+                let floorWall = row.querySelector('.floorwall').value;
+
+                console.log("floorwall:", floorWall);
+
 
                 let tileArea = height * width; 
                 let rowSquareMeters = quantity * tileArea; 
@@ -151,6 +172,11 @@
                     adjustedSquareMeters *= 1.15; // Add 15%
                 }
                 row.querySelector('.adjustedSquareMeters').innerText = adjustedSquareMeters.toFixed(2);
+                console.log("Stokos Value:", stokos);
+                console.log("tm:", adjustedSquareMeters);
+                let rowStokos = adjustedSquareMeters * stokos ;
+                row.querySelector('.rowStokos').innerText = rowStokos.toFixed(2);
+
 
                 if (tileSize === "30x30") {
                        receptorsPerSquareMeter = 44;
@@ -169,7 +195,7 @@
                 receptorsNeeded = (adjustedSquareMeters * receptorsPerSquareMeter)/200;
 
 
-                // New calculation for tiles and packages if package m² is provided
+              /*  // New calculation for tiles and packages if package m² is provided
                 if (packageSize > 0) {
                     let [tileWidth, tileHeight] = tileSize.split('x').map(val => parseFloat(val) / 100);
                     let areaOfTile = tileWidth * tileHeight;
@@ -195,25 +221,58 @@
 
                     row.querySelector('.adjustedSquareMeters').innerText = totalPackageSquareMeters.toFixed(2);
 
+                } */ 
+
+                 // New calculation for floor wall selection
+                 
+                 if (floorWall === "wall") {
+                    let [tileWidth, tileHeight] = tileSize.split('x').map(val => parseFloat(val) / 100);
+                    let areaOfTile = tileWidth * tileHeight;
+                    let packageSize =1.44 ;
+
+                    // Find the number of tiles needed for this row
+                    let numheight = Math.ceil((height / tileHeight));
+                    let numwidth = Math.ceil((width / tileWidth));
+                    let numTiles = numheight * numwidth;
+                    row.querySelector('.tilesNeeded').innerText = numTiles;
+
+                    // Calculate number of tiles per package
+                    let tilesPerPackage = Math.floor(packageSize / areaOfTile);
+                    row.querySelector('.tilesPerPackage').innerText = tilesPerPackage;
+
+                    // Find the number of packages needed
+                    let numPackages = Math.ceil(numTiles / tilesPerPackage);
+                    row.querySelector('.packagesNeeded').innerText = numPackages;
+
+                    // Calculate the total square meters for this tile dimension
+                    let totalPackageSquareMeters = numPackages * packageSize;
+                    adjustedSquareMeters = totalPackageSquareMeters;
+
+                    rowStokos = adjustedSquareMeters * stokos ;
+                    row.querySelector('.rowStokos').innerText = rowStokos.toFixed(2);
+
+
+                    row.querySelector('.adjustedSquareMeters').innerText = totalPackageSquareMeters.toFixed(2);
+
                 }
                 
                 totalGlue += (adjustedSquareMeters *7 ) ;
                 totalCrosses += Math.ceil((adjustedSquareMeters/ 50 ) );
-                let stokosCalculation = (adjustedSquareMeters * stokos);
+               // let stokosCalculation = (adjustedSquareMeters * stokos);
                // console.log("Stokos Calculation for Row:", stokosCalculation); 
-                totalStokos += stokosCalculation; 
+                totalStokos += rowStokos; 
 
-                  // **Store receptors total per tile size**
+                  
+
+                  // Υποδοχείς ανα διάσταση
                   if (!totalReceptors[tileSize]) {
                          totalReceptors[tileSize] = 0;
                       }
-                     totalReceptors[tileSize] += receptorsNeeded;
+                  totalReceptors[tileSize] += receptorsNeeded;
                    
-                     totalSfines += Math.ceil(receptorsNeeded) ;  
+                  totalSfines += Math.ceil(receptorsNeeded) ;  
 
-
-
-                // Store totals by dimension
+                // Σύνολα ανα διάσταση
                 if (!totalSquareMeters[tileSize]) {
                     totalSquareMeters[tileSize] = 0;
                 }
@@ -222,7 +281,7 @@
             });
 
             
-            // Display totals
+            // Σύνολα 
             let totalOutput = "<h3>Συνολικά τμ ανά διάσταση:</h3>";
             for (let tileSize in totalSquareMeters) {
                 totalOutput += `<p>${tileSize}: ${totalSquareMeters[tileSize].toFixed(2)} m²</p>`;
@@ -232,6 +291,7 @@
             for (let tileSize in totalReceptors) {
               totalOutput += `<p>${tileSize}: ${Math.ceil(totalReceptors[tileSize])} σακουλάκια</p>`;
             }  
+
                totalOutput += `<h3>Παρελκόμενα: </h3>`;
                totalOutput += `<p>Σφήνες : ${totalSfines} σακουλάκια</p>`;
                totalOutput += `<p>Κόλλα : ${totalGlue} kg</p>`;
