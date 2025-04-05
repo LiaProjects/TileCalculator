@@ -46,41 +46,53 @@
         }
 
         table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fff;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 8px;
-            overflow: hidden;
-        }
+                width: 100%;
+                border-collapse: collapse;
+                background: #fff;
+                box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+                border-radius: 8px;
+                overflow: hidden;
+                font-size: 14px; /* smaller font */
+            }
 
-        th {
-            background-color: #4CAF50;
-            color: white;
-            padding: 12px;
-            font-size: 16px;
-        }
+            th {
+                background-color: #005caa;
+                color: white;
+                padding: 8px; /* reduced padding */
+                font-size: 14px;
+            }
 
-        td {
-            padding: 10px;
-            text-align: center;
-        }
+            td {
+                padding: 6px; /* reduced padding */
+                text-align: center;
+            }
+
 
         body {
             font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to right, #74ebd5, #acb6e5);
+            background: linear-gradient(to right, #d8dddc, #cdced1);
             padding: 20px;
         }
 
         .container {
-            max-width: 2000px;  /* Adjust if needed */
-            margin: auto;
-            background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-            overflow-x: auto; /* Enables horizontal scrolling if needed */
+                max-width: 2000px;
+                margin: auto;
+                background: #f0f0f0;
+                padding: 20px;
+                border-radius: 10px;
+
+            }
+
+            .container > .image-container {
+            align-self: flex-end; /* Push image to the bottom */
+            margin-top: 20px;
+            text-align: right;
         }
+
+        .image-container img {
+            width: 150px;
+        }
+
 
 
         @media screen and (orientation: portrait) {
@@ -118,8 +130,13 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Υπολογιστής Πλακιδίων</h2>
+    <div class="container"  >
+         
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0;">Υπολογιστής Πλακιδίων</h2>
+            <img src="logo.svg" alt="Logo" style="width: 150px;">
+          </div>
+       
         
         <table>
             <thead>
@@ -132,11 +149,8 @@
                     <th>Τύπος</th>
                     <th>Χιλιοστά Στόκου</th>
                     <th>Τετραγωνικά μέτρα</th>
-                    <th>Προσαρμοσμένα Τετραγωνικά Μέτρα</th>
+                    <th>Προσαρμοσμένα ΤM</th>
                     <th>Στόκος (kg)</th>
-                    <th>Τεμάχια Πλακιδίων</th>
-                    <th>Τεμάχια ανά πακέτο</th>
-                    <th>Πακέτα</th>
                     <th>Action</th>
                 </tr>
             </thead>
@@ -146,13 +160,16 @@
                     <td><input type="number" class="width" step="0.01"></td>
                     <td>
                         <select class="tileSize">
-                            <option value="20x20">20x20</option>
                             <option value="30x30">30x30</option>
+                            <option value="20x20">33x33</option>
                             <option value="40x40">40x40</option>
+                            <option value="40x40">60x60</option>
+                            <option value="40x40">90x90</option>
                             <option value="60x120">60x120</option>
+                            <option value="120x120">120x120</option>
                         </select>
                     </td>
-                    <td><input type="number" class="quantity"></td>
+                    <td><input type="number" class="quantity" value="1"></td>
                    
                     <td>
                         <select class="floorwall">
@@ -163,10 +180,7 @@
                     <td><input type="number" class="stokos" step="0.01"></td>
                     <td class="squareMeters">0.00</td>
                     <td class="adjustedSquareMeters">0.00</td>
-                    <td class="rowStokos">0.00</td>
-                    <td class="tilesNeeded">0</td>
-                    <td class="tilesPerPackage">0</td>
-                    <td class="packagesNeeded">0</td>
+                    <td class="rowStokos">0.00</td>                
                     <td><span class="addRowBtn" onclick="addRow()">+</span></td>
                 </tr>
             </tbody>
@@ -174,6 +188,11 @@
       
         
         <div class="result" id="totalOutput"></div>
+
+        <!-- Image container aligned to the bottom right -->
+        <div class="image-container">
+            <img src="logo.svg" alt="Logo">
+        </div>
     </div>
 
     <script>
@@ -187,13 +206,16 @@
                 <td><input type="number" class="width" step="0.01"></td>
                 <td>
                     <select class="tileSize">
-                        <option value="20x20">20x20</option>
-                        <option value="30x30">30x30</option>
-                        <option value="40x40">40x40</option>
-                        <option value="60x120">60x120</option>
+                            <option value="30x30">30x30</option>
+                            <option value="20x20">33x33</option>
+                            <option value="40x40">40x40</option>
+                            <option value="40x40">60x60</option>
+                            <option value="40x40">90x90</option>
+                            <option value="60x120">60x120</option>
+                            <option value="120x120">120x120</option>
                     </select>
                 </td>
-                <td><input type="number" class="quantity"></td>
+                <td><input type="number" class="quantity" value=1></td>
       
                 <td>
                         <select class="floorwall">
@@ -205,9 +227,6 @@
                 <td class="squareMeters">0.00</td>
                 <td class="adjustedSquareMeters">0.00</td>
                 <td class="rowStokos">0.00</td>
-                <td class="tilesNeeded">0</td>
-                <td class="tilesPerPackage">0</td>
-                <td class="packagesNeeded">0</td>
                 <td>
                     <span class="removeRowBtn" onclick="removeRow(this)">X</span>
                     <span class="addRowBtn" onclick="addRow()">+</span>
@@ -268,9 +287,10 @@
 
                 // Adjust square meters based on tile dimension
                 let adjustedSquareMeters = rowSquareMeters;
-                if (tileSize === "20x20") {
+                if (tileSize === "30x30" || tileSize === "33x33" || tileSize === "40x40" ||  tileSize === "60x60" 
+                || tileSize === "90x90" ) {
                     adjustedSquareMeters *= 1.10; // Add 10%
-                } else if (tileSize === "30x30" || tileSize === "40x40" || tileSize === "60x120") {
+                } else if ( tileSize === "60x120" ||  tileSize === "120x120" ) {
                     adjustedSquareMeters *= 1.15; // Add 15%
                 }
                 row.querySelector('.adjustedSquareMeters').innerText = adjustedSquareMeters.toFixed(2);
@@ -286,8 +306,12 @@
                       receptorsPerSquareMeter = 25;
                     } else if (tileSize === "60x120") {
                       receptorsPerSquareMeter = 11;
-                    } else if (tileSize === "20x20") {
-                      receptorsPerSquareMeter = 50;
+                    } else if (tileSize === "33x33") {
+                      receptorsPerSquareMeter = 37;
+                    }else if (tileSize === "120x120" || tileSize === "90x90") {
+                      receptorsPerSquareMeter = 10;
+                    }else if (tileSize === "60x60") {
+                      receptorsPerSquareMeter = 17;
                     }
 
 
@@ -336,25 +360,25 @@
                     let numheight = Math.ceil((height / tileHeight));
                     let numwidth = Math.ceil((width / tileWidth));
                     let numTiles = numheight * numwidth;
-                    row.querySelector('.tilesNeeded').innerText = numTiles;
+                   // row.querySelector('.tilesNeeded').innerText = numTiles;
 
                     // Calculate number of tiles per package
                     let tilesPerPackage = Math.floor(packageSize / areaOfTile);
-                    row.querySelector('.tilesPerPackage').innerText = tilesPerPackage;
+                    //row.querySelector('.tilesPerPackage').innerText = tilesPerPackage;
 
                     // Find the number of packages needed
                     let numPackages = Math.ceil(numTiles / tilesPerPackage);
-                    row.querySelector('.packagesNeeded').innerText = numPackages;
+                   // row.querySelector('.packagesNeeded').innerText = numPackages;
 
                     // Calculate the total square meters for this tile dimension
                     let totalPackageSquareMeters = numPackages * packageSize;
-                    adjustedSquareMeters = totalPackageSquareMeters;
+                    adjustedSquareMeters = totalPackageSquareMeters * quantity;
 
                     rowStokos = adjustedSquareMeters * stokos ;
                     row.querySelector('.rowStokos').innerText = rowStokos.toFixed(2);
 
 
-                    row.querySelector('.adjustedSquareMeters').innerText = totalPackageSquareMeters.toFixed(2);
+                    row.querySelector('.adjustedSquareMeters').innerText = adjustedSquareMeters.toFixed(2);
 
                 }
                 
