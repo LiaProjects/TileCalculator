@@ -93,44 +93,46 @@
             width: 150px;
         }
 
+         /* Mobile landscape and portrait styles */
+         @media screen and (orientation: portrait) {
+            .container {
+                display: none; /* Hide content in portrait */
+            }
 
+            .rotate-message {
+                display: block;
+            }
+        }
 
-        @media screen and (orientation: portrait) {
-                    body {
-                        display: flex;
-                        justify-content: center;
-                        align-items: center;
-                        height: 100vh;
-                        background: #f8f9fa;
-                        text-align: center;
-                    }
+        /* Adjust layout for landscape orientation */
+        @media screen and (orientation: landscape) {
+            .rotate-message {
+                display: none; /* Hide the rotate message in landscape */
+            }
 
-                    .container {
-                        display: none; /* Hide content in portrait */
-                    }
+            .container {
+                display: block;
+            }
 
-                    .rotate-message {
-                        display: block;
-                        font-size: 20px;
-                        color: red;
-                        font-weight: bold;
-                    }
-                }
+            /* If screen is too small in landscape, make the table and form more compact */
+            table {
+                font-size: 12px;
+            }
 
-                @media screen and (orientation: landscape) {
-                    .rotate-message {
-                        display: none;
-                    }
+            th, td {
+                padding: 5px; /* Smaller padding in landscape */
+            }
+        }
 
-                    .container {
-                        display: block;
-                    }
-                }
 
     </style>
 </head>
 <body>
-    <div class="container"  >
+    <div class="rotate-message">
+        Please rotate your device to landscape mode for the best experience.
+    </div>
+
+    <div class="container">
          
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
             <h2 style="margin: 0;">Υπολογιστής Πλακιδίων</h2>
