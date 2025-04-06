@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>Tile Calculator</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #d8dddc, #cdced1);
+            padding: 20px;
+        }
+        input, select, button { margin: 10px 5px; padding: 8px; }
+        .result { font-weight: bold; margin-top: 20px; }
+        .addRowBtn, .removeRowBtn {
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            transition: 0.3s ease-in-out;
+        }
+        .addRowBtn { background-color: green; color: white; }
+        .removeRowBtn { background-color: red; color: white; }
+        .addRowBtn:hover, .removeRowBtn:hover { transform: scale(1.1); }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 14px;
+        }
+        th {
+            background-color: #005caa;
+            color: white;
+            padding: 8px;
+            font-size: 14px;
+        }
+        td { padding: 6px; text-align: center; }
+        .container {
+            width: 100%;
+            max-width: 1500px;
+            margin: auto;
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .image-container img { width: 150px; }
+        @media screen and (orientation: portrait) {
+            .container { display: none; }
+            .rotate-message { display: block; }
+        }
+        @media screen and (orientation: landscape) {
+            .rotate-message { display: none; }
+            .container { display: block; }
+            table { font-size: 12px; }
+            th, td { padding: 5px; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            table { font-size: 12px; }
+            th, td { padding: 5px; }
+        }
+    </style>
+</head>
+<body>
+<div class="rotate-message">Γυρίστε το σε landscape για καλύτερη εμπειρία.</div>
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h2 style="margin: 0;">Υπολογιστής Πλακιδίων</h2>
+        <img src="logo.svg" alt="Logo" style="width: 150px;">
+    </div>
+    <table>
+        <thead>
+        <tr>
+            <th>Ύψος (m)</th>
+            <th>Πλάτος (m)</th>
+            <th>Διάσταση πλακιδίου (cm)</th>
+            <th>Ποσότητα</th>
+            <th>Τύπος</th>
+            <th>Χιλιοστά Στόκου</th>
+            <th>Τετραγωνικά μέτρα</th>
+            <th>Προσαρμοσμένα ΤM</th>
+            <th>Στόκος (kg)</th>
+            <th>Ενέργεια</th>
+        </tr>
+        </thead>
+        <tbody id="tileTable">
+        <tr>
+            <td><input type="number" class="height" step="0.01" min="0"></td>
+            <td><input type="number" class="width" step="0.01" min="0"></td>
+            <td><input type="text" class="tileSize form-control" placeholder="π.χ. 60x60"></td>
+            <td><input type="number" class="quantity" value="1" min="1"></td>
+            <td>
+                <select class="floorwall">
+                    <option value="wall">Τοίχος</option>
+                    <option value="floor" selected>Δάπεδο</option>
+                </select>
+            </td>
+            <td><input type="number" class="stokos" step="0.01" min="0"></td>
+            <td class="squareMeters">0.00</td>
+            <td class="adjustedSquareMeters">0.00</td>
+            <td class="rowStokos">0.00</td>
+            <td><span class="addRowBtn" onclick="addRow()">+</span></td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="result" id="totalOutput"></div>
+    <div class="image-container"><img src="logo.svg" alt="Logo"></div>
+</div>
+
+<!-- Scripts -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/corejs-typeahead/1.3.1/typeahead.bundle.min.js"></script>
+<script>
+   const tileSizes = ["30x30", "33x33", "40x40", "60x60", "90x90", "60x120", "120x120"];
+    const tileSizeEngine = new Bloodhound({
+        datumTokenizer: Bloodhound.tokenizers.whitespace,
+        queryTokenizer: Bloodhound.tokenizers.whitespace,
+        local: tileSizes
+    });
+
+    function applyTypeahead() {
+        $('.tileSize').typeahead('destroy').typeahead({
+            hint: true,
+            highlight: true,
+            minLength: 1
+        }, {
+            name: 'tileSizes',
+            source: tileSizeEngine
+        });
+    }
+
+    function addRow() {
+        const row = `<tr>
+            <td><input type="number" class="height" step="0.01" min="0"></td>
+            <td><input type="number" class="width" step="0.01" min="0"></td>
+            <td><input type="text" class="tileSize form-control" placeholder="π.χ. 60x60"></td>
+            <td><input type="number" class="quantity" value="1" min="1"></td>
+            <td>
+                <select class="floorwall">
+                    <option value="wall">Τοίχος</option>
+                    <option value="floor" selected>Δάπεδο</option>
+                </select>
+            </td>
+            <td><input type="number" class="stokos" step="0.01" min="0"></td>
+            <td class="squareMeters">0.00</td>
+            <td class="adjustedSquareMeters">0.00</td>
+            <td class="rowStokos">0.00</td>
+            <td><span class="removeRowBtn" onclick="removeRow(this)">−</span></td>
+        </tr>`;
+        $('#tileTable').append(row);
+        //applyTypeahead();
+        calculateTiles(); // Recalculate after adding a row
+    }
+
+    function removeRow(btn) {
+        $(btn).closest('tr').remove();
+        calculateTiles(); // Recalculate after row is removed
+    }
+
+    // Initialize on page load
+    $(document).ready(function() {
+        //applyTypeahead();
+        
+        // Set up event listeners for all existing and future inputs
+        $(document).on('input change', '.height, .width, .quantity, .tileSize, .stokos, .floorwall', function() {
+            calculateTiles();
+        });
+    });
+
+        // Function to calculate tiles for each row
+        function calculateTiles() {
+            let rows = document.querySelectorAll('#tileTable tr');
+            console.log("rows:", rows);
+            let totalSquareMeters = {};
+            let totalReceptors = {} ;
+            let totalGlue = 0 ;
+            let totalCrosses = 0 ;
+            let totalStokos = 0 ;
+            //let stokosInput = document.getElementById('stokos');
+            //let stokos = parseFloat(stokosInput.value) || 0;
+            //console.log("Stokos Value:", stokos); 
+            let receptorsPerSquareMeter = 0;
+            let receptorsNeeded = 0 ;
+            let totalSfines= 0;
+                 
+
+            rows.forEach(row => {
+                let height = parseFloat(row.querySelector('.height').value) || 0;
+                let width = parseFloat(row.querySelector('.width').value) || 0;
+                let quantity = parseInt(row.querySelector('.quantity').value) || 0;
+                let tileSize = row.querySelector('.tileSize').value;
+                //let packageSize = parseFloat(row.querySelector('.packageSize').value) || 0;
+                let stokos = parseFloat(row.querySelector('.stokos').value) || 0;
+                let floorWall = row.querySelector('.floorwall').value;
+
+                console.log("floorwall:", floorWall);
+                console.log("tileSize:", tileSize);
+
+
+
+                let tileArea = height * width; 
+                let rowSquareMeters = quantity * tileArea; 
+                row.querySelector('.squareMeters').innerText = rowSquareMeters.toFixed(2);
+
+                // Adjust square meters based on tile dimension
+                let adjustedSquareMeters = rowSquareMeters;
+                if (tileSize === "30x30" || tileSize === "33x33" || tileSize === "40x40" ||  tileSize === "60x60" 
+                || tileSize === "90x90" ) {
+                    adjustedSquareMeters *= 1.10; // Add 10%
+                } else if ( tileSize === "60x120" ||  tileSize === "120x120" ) {
+                    adjustedSquareMeters *= 1.15; // Add 15%
+                }
+                row.querySelector('.adjustedSquareMeters').innerText = adjustedSquareMeters.toFixed(2);
+                console.log("Stokos Value:", stokos);
+                console.log("tm:", adjustedSquareMeters);
+                let rowStokos = adjustedSquareMeters * stokos ;
+                row.querySelector('.rowStokos').innerText = rowStokos.toFixed(2);
+
+
+                if (tileSize === "30x30") {
+                       receptorsPerSquareMeter = 44;
+                    } else if (tileSize === "40x40") {
+                      receptorsPerSquareMeter = 25;
+                    } else if (tileSize === "60x120") {
+                      receptorsPerSquareMeter = 11;
+                    } else if (tileSize === "33x33") {
+                      receptorsPerSquareMeter = 37;
+                    }else if (tileSize === "120x120" || tileSize === "90x90") {
+                      receptorsPerSquareMeter = 10;
+                    }else if (tileSize === "60x60") {
+                      receptorsPerSquareMeter = 17;
+                    }
+
+
+                console.log("adjustedSquareMeters:", adjustedSquareMeters);
+                console.log("receptorsPerSquareMeter:", receptorsPerSquareMeter);  
+
+                receptorsNeeded = (adjustedSquareMeters * receptorsPerSquareMeter)/200;
+                console.log("tileSize3:", tileSize);
+
+                if (floorWall === "wall") {
+
+                    console.log("tileSize2:", tileSize);
+                    console.log("tileSize2:", height);
+                    console.log("tileSize2:", width);
+
+                    let [tileWidth, tileHeight] = tileSize.split('x').map(val => parseFloat(val) / 100);
+                    let areaOfTile = tileWidth * tileHeight;
+                    let packageSize =1.44 ;
+
+                    console.log("lia");
+                    console.log(tileWidth);
+                    console.log(tileHeight);
+
+
+
+                    // Find the number of tiles needed for this row
+                    let numheight = Math.ceil((height / tileHeight));
+                    let numwidth = Math.ceil((width / tileWidth));
+                    let numTiles = numheight * numwidth;
+                   // row.querySelector('.tilesNeeded').innerText = numTiles;
+
+                    // Calculate number of tiles per package
+                    let tilesPerPackage = Math.floor(packageSize / areaOfTile);
+                    //row.querySelector('.tilesPerPackage').innerText = tilesPerPackage;
+
+                    // Find the number of packages needed
+                    let numPackages = Math.ceil(numTiles / tilesPerPackage);
+                   // row.querySelector('.packagesNeeded').innerText = numPackages;
+
+                    // Calculate the total square meters for this tile dimension
+                    let totalPackageSquareMeters = numPackages * packageSize;
+                    adjustedSquareMeters = totalPackageSquareMeters * quantity;
+
+                    rowStokos = adjustedSquareMeters * stokos ;
+                    row.querySelector('.rowStokos').innerText = rowStokos.toFixed(2);
+
+
+                    row.querySelector('.adjustedSquareMeters').innerText = adjustedSquareMeters.toFixed(2);
+
+                }
+                
+                totalGlue += (adjustedSquareMeters *7 ) ;
+                totalCrosses += Math.ceil((adjustedSquareMeters/ 50 ) );
+               // let stokosCalculation = (adjustedSquareMeters * stokos);
+               // console.log("Stokos Calculation for Row:", stokosCalculation); 
+                totalStokos += rowStokos; 
+
+                  
+
+                  // Υποδοχείς ανα διάσταση
+                  if (!totalReceptors[tileSize]) {
+                         totalReceptors[tileSize] = 0;
+                      }
+                  totalReceptors[tileSize] += receptorsNeeded;
+                   
+                  totalSfines += Math.ceil(receptorsNeeded) ;  
+
+                // Σύνολα ανα διάσταση
+                if (!totalSquareMeters[tileSize]) {
+                    totalSquareMeters[tileSize] = 0;
+                }
+                totalSquareMeters[tileSize] += adjustedSquareMeters;
+
+            });
+
+            
+            // Σύνολα 
+            let totalOutput = "<h3>Συνολικά τμ ανά διάσταση:</h3>";
+            for (let tileSize in totalSquareMeters) {
+                totalOutput += `<p>${tileSize}: ${totalSquareMeters[tileSize].toFixed(2)} m²</p>`;
+            } 
+              
+               totalOutput += `<h3>Υποδοχείς ανά διάσταση: </h3>`;
+            for (let tileSize in totalReceptors) {
+              totalOutput += `<p>${tileSize}: ${Math.ceil(totalReceptors[tileSize])} σακουλάκια</p>`;
+            }  
+
+               totalOutput += `<h3>Παρελκόμενα: </h3>`;
+               totalOutput += `<p>Σφήνες : ${totalSfines} σακουλάκια</p>`;
+               totalOutput += `<p>Κόλλα : ${totalGlue} kg</p>`;
+               totalOutput += `<p>Σταυροί : ${totalCrosses} σακουλάκια</p>`;
+               totalOutput += `<p>Στόκος : ${totalStokos} kg</p>`;
+               document.getElementById('totalOutput').innerHTML = totalOutput;
+
+        }
+
+        // Initialize the first row with event listeners
+       // addEventListeners();
+
+
+
+</script>
+</body>
+</html>
