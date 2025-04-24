@@ -315,7 +315,7 @@
                 row.querySelector('.adjustedSquareMeters').innerText = adjustedSquareMeters.toFixed(2);
                 console.log("Stokos Value:", stokos);
                 console.log("tm:", adjustedSquareMeters);
-                let rowStokos = adjustedSquareMeters * stokos ;
+                let rowStokos = (rowSquareMeters * (stokos * 0.01) )*1.10 ;
                 row.querySelector('.rowStokos').innerText = rowStokos.toFixed(2);
 
 
@@ -393,7 +393,7 @@
                     let totalPackageSquareMeters = numPackages * packageSize;
                     adjustedSquareMeters = totalPackageSquareMeters * quantity;
 
-                    rowStokos = adjustedSquareMeters * stokos ;
+                    rowStokos = (rowSquareMeters * (stokos * 0.01) )*1.10;
                     row.querySelector('.rowStokos').innerText = rowStokos.toFixed(2);
 
 
@@ -401,8 +401,8 @@
 
                 }
                 
-                totalGlue += (adjustedSquareMeters *7 ) ;
-                totalCrosses += Math.ceil((adjustedSquareMeters/ 50 ) );
+                totalGlue += Math.ceil((rowSquareMeters * 7.7) + Number.EPSILON);
+                totalCrosses += Math.ceil(((rowSquareMeters/ 50 ) * 1.10) );
                // let stokosCalculation = (adjustedSquareMeters * stokos);
                // console.log("Stokos Calculation for Row:", stokosCalculation); 
                 totalStokos += rowStokos; 
