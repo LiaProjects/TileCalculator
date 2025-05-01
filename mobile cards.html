@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <title>Tile Calculator</title>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(to right, #d8dddc, #cdced1);
+            padding: 15px;}
+            input, select, button { margin: 10px 5px; padding: 8px; }
+
+        .container {
+            width: 100%;
+            max-width: 1300px;
+            margin: auto;
+            background: #f0f0f0;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .container > .image-container {
+            align-self: flex-end;
+            margin-top: 20px;
+            text-align: right;
+        }
+
+        .image-container img {
+            width: 150px;
+        }
+
+        /* Table styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #fff;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            font-size: 14px;
+            display: table;
+        }
+
+        th {
+            background-color: #005caa;
+            color: white;
+            padding: 8px;
+            font-size: 14px;
+        }
+
+        td {
+            padding: 6px;
+            text-align: center;
+        }
+
+        /* Mobile cards styles */
+        .mobile-card {
+            display: none;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .mobile-card .card-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .mobile-card .card-label {
+            font-weight: 600;
+            color: #005caa;
+        }
+
+        .mobile-card .card-value {
+            text-align: right;
+        }
+
+        .mobile-card input, 
+        .mobile-card select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .mobile-card .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        /* Button styles */
+        .addRowBtn, .removeRowBtn {
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 6px 12px;
+            border: none;
+            border-radius: 5px;
+            transition: 0.3s ease-in-out;
+        }
+
+        .addRowBtn {
+            background-color: green;
+            color: white;
+        }
+
+        .removeRowBtn {
+            background-color: red;
+            color: white;
+        }
+
+        .addRowBtn:hover, .removeRowBtn:hover {
+            transform: scale(1.1);
+        }
+
+        /* Rotate message */
+        .rotate-message {
+            display: none;
+        }
+
+        /* Results section */
+        .result {
+          
+            font-weight: bold; margin-top: 20px; 
+        }
+
+        /* Responsive styles */
+        @media screen and (max-width: 768px) {
+            table {
+                display: none;
+            }
+
+            .mobile-card {
+                display: block;
+            }
+
+            .container {
+                padding: 10px;
+            }
+        }
+
+        @media screen and (min-width: 769px) {
+            .mobile-card {
+                display: none !important;
+            }
+        }
+
+        @media screen and (orientation: portrait) {
+            .container {
+                display: none;
+            }
+
+            .rotate-message {
+                display: block;
+                text-align: center;
+                font-size: 20px;
+                margin-top: 50px;
+            }
+        }
+
+        @media screen and (orientation: landscape) {
+            .rotate-message {
+                display: none;
+            }
+
+            .container {
+                display: block;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 5px;
+            }
+        }
+
+        /* Additional mobile styles */
+        @media (max-width: 768px) {
+            .container {
+                width: 100%;
+                padding: 10px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            th, td {
+                padding: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="rotate-message">
+        Γυρίστε το σε landscape για καλύτερη εμπειρία.
+    </div>
+
+    <div class="container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="margin: 0;">Υπολογιστής Πλακιδίων</h2>
+            <img src="logo.svg" alt="Logo" style="width: 150px;">
+        </div>
+       
+        <!-- Desktop Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th>Ύψος (m)</th>
+                    <th>Πλάτος (m)</th>
+                    <th>Διάσταση πλακιδίου (cm)</th>
+                    <th>Ποσότητα</th>
+                    <th>Τύπος</th>
+                    <th>Χιλιοστά Στόκου</th>
+                    <th>Τετραγωνικά μέτρα</th>
+                    <th>Προσαρμοσμένα ΤM</th>
+                    <th>Στόκος (kg)</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="tileTable">
+                <tr>
+                    <td><input type="number" class="height" step="0.01"></td>
+                    <td><input type="number" class="width" step="0.01"></td>
+                    <td>
+                        <select class="tileSize">
+                            <option value="30x30">30x30</option>
+                            <option value="33x33">33x33</option>
+                            <option value="40x40">40x40</option>
+                            <option value="60x60">60x60</option>
+                            <option value="90x90">90x90</option>
+                            <option value="60x120">60x120</option>
+                            <option value="120x120">120x120</option>
+                        </select>
+                    </td>
+                    <td><input type="number" class="quantity" value="1"></td>
+                    <td>
+                        <select class="floorwall">
+                            <option value="wall">Τοίχος</option>
+                            <option value="floor" selected>Δάπεδο</option> 
+                        </select>
+                    </td>
+                    <td><input type="number" class="stokos" step="0.01"></td>
+                    <td class="squareMeters">0.00</td>
+                    <td class="adjustedSquareMeters">0.00</td>
+                    <td class="rowStokos">0.00</td>                
+                    <td><span class="addRowBtn" onclick="addRow()">+</span></td>
+                </tr>
+            </tbody>
+        </table>
+      
+        <!-- Mobile Cards -->
+        <div id="mobileCards">
+            <div class="mobile-card">
+                <div class="card-row">
+                    <div class="card-label">Ύψος (m):</div>
+                    <div class="card-value"><input type="number" class="height" step="0.01"></div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Πλάτος (m):</div>
+                    <div class="card-value"><input type="number" class="width" step="0.01"></div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Διάσταση:</div>
+                    <div class="card-value">
+                        <select class="tileSize">
+                            <option value="30x30">30x30</option>
+                            <option value="33x33">33x33</option>
+                            <option value="40x40">40x40</option>
+                            <option value="60x60">60x60</option>
+                            <option value="90x90">90x90</option>
+                            <option value="60x120">60x120</option>
+                            <option value="120x120">120x120</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Ποσότητα:</div>
+                    <div class="card-value"><input type="number" class="quantity" value="1"></div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Τύπος:</div>
+                    <div class="card-value">
+                        <select class="floorwall">
+                            <option value="wall">Τοίχος</option>
+                            <option value="floor" selected>Δάπεδο</option> 
+                        </select>
+                    </div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Χιλιοστά Στόκου:</div>
+                    <div class="card-value"><input type="number" class="stokos" step="0.01"></div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Τετραγωνικά μέτρα:</div>
+                    <div class="card-value squareMeters">0.00</div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Προσαρμοσμένα ΤM:</div>
+                    <div class="card-value adjustedSquareMeters">0.00</div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Στόκος (kg):</div>
+                    <div class="card-value rowStokos">0.00</div>
+                </div>
+                <div class="action-buttons">
+                    <span class="removeRowBtn" onclick="removeRow(this)">X</span>
+                    <span class="addRowBtn" onclick="addRow()">+</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="result" id="totalOutput"></div>
+
+        <div class="image-container">
+            <img src="logo.svg" alt="Logo">
+        </div>
+    </div>
+
+    <script>
+        // Function to add a new row (both table and card)
+        function addRow() {
+            // Add table row
+            let table = document.getElementById('tileTable');
+            let row = table.insertRow();
+            row.innerHTML = `
+                <td><input type="number" class="height" step="0.01"></td>
+                <td><input type="number" class="width" step="0.01"></td>
+                <td>
+                    <select class="tileSize">
+                        <option value="30x30">30x30</option>
+                        <option value="33x33">33x33</option>
+                        <option value="40x40">40x40</option>
+                        <option value="60x60">60x60</option>
+                        <option value="90x90">90x90</option>
+                        <option value="60x120">60x120</option>
+                        <option value="120x120">120x120</option>
+                    </select>
+                </td>
+                <td><input type="number" class="quantity" value=1></td>
+                <td>
+                    <select class="floorwall">
+                        <option value="floor" selected>Δάπεδο</option> 
+                        <option value="wall">Τοίχος</option>
+                    </select>
+                </td>
+                <td><input type="number" class="stokos" step="0.01"></td>
+                <td class="squareMeters">0.00</td>
+                <td class="adjustedSquareMeters">0.00</td>
+                <td class="rowStokos">0.00</td>
+                <td>
+                    <span class="removeRowBtn" onclick="removeRow(this)">X</span>
+                    <span class="addRowBtn" onclick="addRow()">+</span>
+                </td>
+            `;
+            addEventListeners(); // Reattach event listeners for new row inputs
+            
+            // Add mobile card
+            let mobileCards = document.getElementById('mobileCards');
+            let card = document.createElement('div');
+            card.className = 'mobile-card';
+            card.innerHTML = `
+                <div class="card-row">
+                    <div class="card-label">Ύψος (m):</div>
+                    <div class="card-value"><input type="number" class="height" step="0.01"></div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Πλάτος (m):</div>
+                    <div class="card-value"><input type="number" class="width" step="0.01"></div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Διάσταση:</div>
+                    <div class="card-value">
+                        <select class="tileSize">
+                            <option value="30x30">30x30</option>
+                            <option value="33x33">33x33</option>
+                            <option value="40x40">40x40</option>
+                            <option value="60x60">60x60</option>
+                            <option value="90x90">90x90</option>
+                            <option value="60x120">60x120</option>
+                            <option value="120x120">120x120</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Ποσότητα:</div>
+                    <div class="card-value"><input type="number" class="quantity" value="1"></div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Τύπος:</div>
+                    <div class="card-value">
+                        <select class="floorwall">
+                            <option value="wall">Τοίχος</option>
+                            <option value="floor" selected>Δάπεδο</option> 
+                        </select>
+                    </div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Χιλιοστά Στόκου:</div>
+                    <div class="card-value"><input type="number" class="stokos" step="0.01"></div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Τετραγωνικά μέτρα:</div>
+                    <div class="card-value squareMeters">0.00</div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Προσαρμοσμένα ΤM:</div>
+                    <div class="card-value adjustedSquareMeters">0.00</div>
+                </div>
+                <div class="card-row">
+                    <div class="card-label">Στόκος (kg):</div>
+                    <div class="card-value rowStokos">0.00</div>
+                </div>
+                <div class="action-buttons">
+                    <span class="removeRowBtn" onclick="removeRow(this)">X</span>
+                    <span class="addRowBtn" onclick="addRow()">+</span>
+                </div>
+            `;
+            mobileCards.appendChild(card);
+            
+            addEventListeners(); // Reattach event listeners for new inputs
+        }
+
+        // Function to remove a row (both table and card)
+        function removeRow(button) {
+            // Remove table row
+            let row = button.closest('tr');
+            if (row) row.remove();
+            
+            // Remove mobile card
+            let card = button.closest('.mobile-card');
+            if (card) card.remove();
+            
+            calculateTiles(); // Recalculate the remaining rows
+        }
+
+        // Function to add event listeners to inputs of each row/card
+        function addEventListeners() {
+            // For table rows
+            let rows = document.querySelectorAll('#tileTable tr');
+            rows.forEach(row => {
+                row.querySelectorAll('input, select').forEach(input => {
+                    input.addEventListener('input', calculateTiles);
+                });
+            });
+            
+            // For mobile cards
+            let cards = document.querySelectorAll('.mobile-card');
+            cards.forEach(card => {
+                card.querySelectorAll('input, select').forEach(input => {
+                    input.addEventListener('input', calculateTiles);
+                });
+            });
+        }
+
+        // Function to calculate tiles for each row/card
+        function calculateTiles() {
+            let totalSquareMeters = {};
+            let totalReceptors = {};
+            let totalGlue = 0;
+            let totalCrosses = 0;
+            let totalStokos = 0;
+            let totalSfines = 0;
+
+            // Process table rows
+            let rows = document.querySelectorAll('#tileTable tr');
+            rows.forEach(row => {
+                processCalculation(
+                    row.querySelector('.height'),
+                    row.querySelector('.width'),
+                    row.querySelector('.tileSize'),
+                    row.querySelector('.quantity'),
+                    row.querySelector('.floorwall'),
+                    row.querySelector('.stokos'),
+                    row.querySelector('.squareMeters'),
+                    row.querySelector('.adjustedSquareMeters'),
+                    row.querySelector('.rowStokos'),
+                    totalSquareMeters,
+                    totalReceptors,
+                    (value) => totalGlue += value,
+                    (value) => totalCrosses += value,
+                    (value) => totalStokos += value,
+                    (value) => totalSfines += value
+                );
+            });
+
+            // Process mobile cards
+            let cards = document.querySelectorAll('.mobile-card');
+            cards.forEach(card => {
+                processCalculation(
+                    card.querySelector('.height'),
+                    card.querySelector('.width'),
+                    card.querySelector('.tileSize'),
+                    card.querySelector('.quantity'),
+                    card.querySelector('.floorwall'),
+                    card.querySelector('.stokos'),
+                    card.querySelector('.squareMeters'),
+                    card.querySelector('.adjustedSquareMeters'),
+                    card.querySelector('.rowStokos'),
+                    totalSquareMeters,
+                    totalReceptors,
+                    (value) => totalGlue += value,
+                    (value) => totalCrosses += value,
+                    (value) => totalStokos += value,
+                    (value) => totalSfines += value
+                );
+            });
+
+            // Display totals
+            let totalOutput = "<h3>Συνολικά τμ ανά διάσταση:</h3>";
+            for (let tileSize in totalSquareMeters) {
+                totalOutput += `<p>${tileSize}: ${totalSquareMeters[tileSize].toFixed(2)} m²</p>`;
+            } 
+
+            totalOutput += `<h3>Υποδοχείς ανά διάσταση: </h3>`;
+            for (let tileSize in totalReceptors) {
+                totalOutput += `<p>${tileSize}: ${Math.ceil(totalReceptors[tileSize])} σακουλάκια</p>`;
+            }  
+
+            totalOutput += `<h3>Παρελκόμενα: </h3>`;
+            totalOutput += `<p>Σφήνες : ${totalSfines} σακουλάκια</p>`;
+            totalOutput += `<p>Κόλλα : ${totalGlue} kg</p>`;
+            totalOutput += `<p>Σταυροί : ${totalCrosses} σακουλάκια</p>`;
+            totalOutput += `<p>Στόκος : ${totalStokos.toFixed(2)} kg</p>`;
+            document.getElementById('totalOutput').innerHTML = totalOutput;
+        }
+
+        // Helper function to process calculations for both table rows and mobile cards
+        function processCalculation(heightEl, widthEl, tileSizeEl, quantityEl, floorWallEl, stokosEl, 
+                                  squareMetersEl, adjustedSquareMetersEl, rowStokosEl,
+                                  totalSquareMeters, totalReceptors, addGlue, addCrosses, addStokos, addSfines) {
+            let height = parseFloat(heightEl.value) || 0;
+            let width = parseFloat(widthEl.value) || 0;
+            let quantity = parseInt(quantityEl.value) || 0;
+            let tileSize = tileSizeEl.value;
+            let stokos = parseFloat(stokosEl.value) || 0;
+            let floorWall = floorWallEl.value;
+
+            let tileArea = height * width; 
+            let rowSquareMeters = quantity * tileArea; 
+            squareMetersEl.innerText = rowSquareMeters.toFixed(2);
+
+            // Adjust square meters based on tile dimension
+            let adjustedSquareMeters = rowSquareMeters;
+            if (tileSize === "30x30" || tileSize === "33x33" || tileSize === "40x40" ||  tileSize === "60x60" 
+            || tileSize === "90x90" ) {
+                adjustedSquareMeters *= 1.10; // Add 10%
+            } else if ( tileSize === "60x120" ||  tileSize === "120x120" ) {
+                adjustedSquareMeters *= 1.15; // Add 15%
+            }
+            adjustedSquareMetersEl.innerText = adjustedSquareMeters.toFixed(2);
+
+            let rowStokos = (rowSquareMeters * (stokos * 0.01) )*1.10;
+            rowStokosEl.innerText = rowStokos.toFixed(2);
+
+            let receptorsPerSquareMeter = 0;
+            if (tileSize === "30x30") {
+                receptorsPerSquareMeter = 44;
+            } else if (tileSize === "40x40") {
+                receptorsPerSquareMeter = 25;
+            } else if (tileSize === "60x120") {
+                receptorsPerSquareMeter = 11;
+            } else if (tileSize === "33x33") {
+                receptorsPerSquareMeter = 37;
+            } else if (tileSize === "120x120" || tileSize === "90x90") {
+                receptorsPerSquareMeter = 10;
+            } else if (tileSize === "60x60") {
+                receptorsPerSquareMeter = 17;
+            }
+
+            let receptorsNeeded = (adjustedSquareMeters * receptorsPerSquareMeter)/200;
+
+            // New calculation for floor wall selection
+            if (floorWall === "wall") {
+                let [tileWidth, tileHeight] = tileSize.split('x').map(val => parseFloat(val) / 100);
+                let areaOfTile = tileWidth * tileHeight;
+                let packageSize = 1.44;
+
+                let numheight = Math.ceil((height / tileWidth));
+                let numwidth = Math.ceil((width / tileHeight));
+                let numTiles = numheight * numwidth;
+
+                let tilesPerPackage = Math.floor(packageSize / areaOfTile);
+                let numPackages = Math.ceil(numTiles / tilesPerPackage);
+                let totalPackageSquareMeters = numPackages * packageSize;
+                adjustedSquareMeters = totalPackageSquareMeters * quantity;
+
+                rowStokos = (rowSquareMeters * (stokos * 0.01) )*1.10;
+                rowStokosEl.innerText = rowStokos.toFixed(2);
+                adjustedSquareMetersEl.innerText = adjustedSquareMeters.toFixed(2);
+            }
+
+            addGlue(Math.ceil((rowSquareMeters * 7.7) + Number.EPSILON));
+            addCrosses(Math.ceil(((rowSquareMeters/ 50 ) * 1.10) ));
+            addStokos(rowStokos); 
+
+            // Υποδοχείς ανα διάσταση
+            if (!totalReceptors[tileSize]) {
+                totalReceptors[tileSize] = 0;
+            }
+            totalReceptors[tileSize] += receptorsNeeded;
+
+            addSfines(Math.ceil(receptorsNeeded));  
+
+            // Σύνολα ανα διάσταση
+            if (!totalSquareMeters[tileSize]) {
+                totalSquareMeters[tileSize] = 0;
+            }
+            totalSquareMeters[tileSize] += adjustedSquareMeters;
+        }
+
+        // Initialize the first row/card with event listeners
+        addEventListeners();
+    </script>
+</body>
+</html>
