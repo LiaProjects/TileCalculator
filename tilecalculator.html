@@ -333,35 +333,6 @@
 
                 receptorsNeeded = (adjustedSquareMeters * receptorsPerSquareMeter)/200;
 
-
-              /*  // New calculation for tiles and packages if package m² is provided
-                if (packageSize > 0) {
-                    let [tileWidth, tileHeight] = tileSize.split('x').map(val => parseFloat(val) / 100);
-                    let areaOfTile = tileWidth * tileHeight;
-
-                    // Find the number of tiles needed for this row
-                    let numheight = Math.ceil((height / tileHeight));
-                    let numwidth = Math.ceil((width / tileWidth));
-                    let numTiles = numheight * numwidth;
-                    row.querySelector('.tilesNeeded').innerText = numTiles;
-
-                    // Calculate number of tiles per package
-                    let tilesPerPackage = Math.floor(packageSize / areaOfTile);
-                    row.querySelector('.tilesPerPackage').innerText = tilesPerPackage;
-
-                    // Find the number of packages needed
-                    let numPackages = Math.ceil(numTiles / tilesPerPackage);
-                    row.querySelector('.packagesNeeded').innerText = numPackages;
-
-                    // Calculate the total square meters for this tile dimension
-                    let totalPackageSquareMeters = numPackages * packageSize;
-                    adjustedSquareMeters = totalPackageSquareMeters;
-
-
-                    row.querySelector('.adjustedSquareMeters').innerText = totalPackageSquareMeters.toFixed(2);
-
-                } */ 
-
                  // New calculation for floor wall selection
                  
                  if (floorWall === "wall") {
@@ -397,8 +368,6 @@
                 
                 totalGlue += Math.ceil((rowSquareMeters * 7.7) + Number.EPSILON);
                 totalCrosses += Math.ceil(((rowSquareMeters/ 50 ) * 1.10) );
-               // let stokosCalculation = (adjustedSquareMeters * stokos);
-               // console.log("Stokos Calculation for Row:", stokosCalculation); 
                 totalStokos += rowStokos; 
 
                   

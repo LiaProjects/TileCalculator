@@ -465,7 +465,7 @@
             });
         }
 
-        // Function to calculate tiles for each row/card
+        // Update the calculateTiles function to only include selected values in totalOutput
         function calculateTiles() {
             let totalSquareMeters = {};
             let totalReceptors = {};
@@ -477,57 +477,69 @@
             // Process table rows
             let rows = document.querySelectorAll('#tileTable tr');
             rows.forEach(row => {
-                processCalculation(
-                    row.querySelector('.height'),
-                    row.querySelector('.width'),
-                    row.querySelector('.tileSize'),
-                    row.querySelector('.quantity'),
-                    row.querySelector('.floorwall'),
-                    row.querySelector('.stokos'),
-                    row.querySelector('.squareMeters'),
-                    row.querySelector('.adjustedSquareMeters'),
-                    row.querySelector('.rowStokos'),
-                    totalSquareMeters,
-                    totalReceptors,
-                    (value) => totalGlue += value,
-                    (value) => totalCrosses += value,
-                    (value) => totalStokos += value,
-                    (value) => totalSfines += value
-                );
+                let tileSize = row.querySelector('.tileSize').value;
+                let quantity = parseInt(row.querySelector('.quantity').value) || 0;
+                if (tileSize && quantity > 0) {
+                    processCalculation(
+                        row.querySelector('.height'),
+                        row.querySelector('.width'),
+                        row.querySelector('.tileSize'),
+                        row.querySelector('.quantity'),
+                        row.querySelector('.floorwall'),
+                        row.querySelector('.stokos'),
+                        row.querySelector('.squareMeters'),
+                        row.querySelector('.adjustedSquareMeters'),
+                        row.querySelector('.rowStokos'),
+                        totalSquareMeters,
+                        totalReceptors,
+                        (value) => totalGlue += value,
+                        (value) => totalCrosses += value,
+                        (value) => totalStokos += value,
+                        (value) => totalSfines += value
+                    );
+                }
             });
 
             // Process mobile cards
             let cards = document.querySelectorAll('.mobile-card');
             cards.forEach(card => {
-                processCalculation(
-                    card.querySelector('.height'),
-                    card.querySelector('.width'),
-                    card.querySelector('.tileSize'),
-                    card.querySelector('.quantity'),
-                    card.querySelector('.floorwall'),
-                    card.querySelector('.stokos'),
-                    card.querySelector('.squareMeters'),
-                    card.querySelector('.adjustedSquareMeters'),
-                    card.querySelector('.rowStokos'),
-                    totalSquareMeters,
-                    totalReceptors,
-                    (value) => totalGlue += value,
-                    (value) => totalCrosses += value,
-                    (value) => totalStokos += value,
-                    (value) => totalSfines += value
-                );
+                let tileSize = card.querySelector('.tileSize').value;
+                let quantity = parseInt(card.querySelector('.quantity').value) || 0;
+                if (tileSize && quantity > 0) {
+                    processCalculation(
+                        card.querySelector('.height'),
+                        card.querySelector('.width'),
+                        card.querySelector('.tileSize'),
+                        card.querySelector('.quantity'),
+                        card.querySelector('.floorwall'),
+                        card.querySelector('.stokos'),
+                        card.querySelector('.squareMeters'),
+                        card.querySelector('.adjustedSquareMeters'),
+                        card.querySelector('.rowStokos'),
+                        totalSquareMeters,
+                        totalReceptors,
+                        (value) => totalGlue += value,
+                        (value) => totalCrosses += value,
+                        (value) => totalStokos += value,
+                        (value) => totalSfines += value
+                    );
+                }
             });
 
             // Display totals
             let totalOutput = "<h3>Συνολικά τμ ανά διάσταση:</h3>";
             for (let tileSize in totalSquareMeters) {
-                totalOutput += `<p>${tileSize}: ${totalSquareMeters[tileSize].toFixed(2)} m²</p>`;
-            } 
+                if (totalSquareMeters[tileSize] > 0) {
+                    totalOutput += `<p>${tileSize}: ${totalSquareMeters[tileSize].toFixed(2)} m²</p>`;
+                }
+            }
 
             totalOutput += `<h3>Υποδοχείς ανά διάσταση: </h3>`;
             for (let tileSize in totalReceptors) {
-                totalOutput += `<p>${tileSize}: ${Math.ceil(totalReceptors[tileSize])} σακουλάκια</p>`;
-            }  
+                if (totalReceptors[tileSize] > 0) {
+                    totalOutput += `<p>${tileSize}: ${Math.ceil(totalReceptors[tileSize])} σακουλάκια</p>`;
+                }
+            }
 
             totalOutput += `<h3>Παρελκόμενα: </h3>`;
             totalOutput += `<p>Σφήνες : ${totalSfines} σακουλάκια</p>`;
@@ -540,7 +552,7 @@
         // Helper function to process calculations for both table rows and mobile cards
         function processCalculation(heightEl, widthEl, tileSizeEl, quantityEl, floorWallEl, stokosEl, 
                                   squareMetersEl, adjustedSquareMetersEl, rowStokosEl,
-                                  totalSquareMeters, totalReceptors, addGlue, addCrosses, addStokos, addSfines) {
+                                  totalSquareMeters, totalReceptors, addGlue,addCrosses, addStokos, addSfines) {
             let height = parseFloat(heightEl.value) || 0;
             let width = parseFloat(widthEl.value) || 0;
             let quantity = parseInt(quantityEl.value) || 0;
@@ -601,8 +613,8 @@
                 rowStokosEl.innerText = rowStokos.toFixed(2);
                 adjustedSquareMetersEl.innerText = adjustedSquareMeters.toFixed(2);
             }
-
-            addGlue(Math.ceil((rowSquareMeters * 7.7) + Number.EPSILON));
+            addGlue(Math.ceil((rowSquareMeters * 7.7)));
+         
             addCrosses(Math.ceil(((rowSquareMeters/ 50 ) * 1.10) ));
             addStokos(rowStokos); 
 
