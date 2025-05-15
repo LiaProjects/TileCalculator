@@ -579,7 +579,10 @@
             }
             adjustedSquareMetersEl.innerText = adjustedSquareMeters.toFixed(2);
 
-            let rowStokos = (rowSquareMeters * (stokos * 0.01) )*1.10;
+           // let rowStokos = (rowSquareMeters * (stokos * 0.01) )*1.10;
+            console.log(rowSquareMeters);
+            let rowStokos = (rowSquareMeters * (stokos * 0.1) )*1.10;
+
             rowStokosEl.innerText = rowStokos.toFixed(2);
 
             let receptorsPerSquareMeter = 0;
@@ -597,7 +600,9 @@
                 receptorsPerSquareMeter = 17;
             }
 
-            let receptorsNeeded = (adjustedSquareMeters * receptorsPerSquareMeter)/200;
+           // let receptorsNeeded = (adjustedSquareMeters * receptorsPerSquareMeter)/200;
+           let receptorsNeeded = (rowSquareMeters * receptorsPerSquareMeter)/200;
+
 
             // New calculation for floor wall selection
             if (floorWall === "wall") {
@@ -619,8 +624,10 @@
                 adjustedSquareMetersEl.innerText = adjustedSquareMeters.toFixed(2);
             }
             addGlue(Math.ceil((rowSquareMeters * 7.7)));
-         
+            // console.log(rowSquareMeters);
             addCrosses(Math.ceil(((rowSquareMeters/ 50 ) * 1.10) ));
+           // console.log(rowSquareMeters/ 50);
+           // console.log(Math.ceil(((rowSquareMeters/ 50 ) * 1.10) ));
             addStokos(rowStokos); 
 
             // Υποδοχείς ανα διάσταση
