@@ -619,7 +619,7 @@
                 let totalPackageSquareMeters = numPackages * packageSize;
                 adjustedSquareMeters = totalPackageSquareMeters * quantity;
 
-                rowStokos = (rowSquareMeters * (stokos * 0.01) )*1.10;
+                rowStokos = (rowSquareMeters * (stokos * 0.1) )*1.10;
                 rowStokosEl.innerText = rowStokos.toFixed(2);
                 adjustedSquareMetersEl.innerText = adjustedSquareMeters.toFixed(2);
             }
