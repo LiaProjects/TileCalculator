@@ -1,468 +1,722 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="el">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <title>Tile Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Υπολογιστής Πλακιδίων - Modern</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #dc2626;
+            --primary-dark: #991b1b;
+            --primary-light: #ef4444;
+            --secondary-color: #dc2626;
+            --danger-color: #dc2626;
+            --bg-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --card-bg: #ffffff;
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            --radius-sm: 8px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(to right, #d8dddc, #cdced1);
-            padding: 15px;}
-            input, select, button { margin: 10px 5px; padding: 8px;  }
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
 
         .container {
-            width: 100%;
-            max-width: 1300px;
-            margin: auto;
-            background: #f0f0f0;
-            padding: 20px;
-            border-radius: 10px;
-        }
-
-        .container > .image-container {
-            align-self: flex-end;
-            margin-top: 20px;
-            text-align: right;
-        }
-
-        .image-container img {
-            width: 150px;
-        }
-
-        /* Table styles */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background: #fff;
-            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
+            max-width: 1200px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-xl);
             overflow: hidden;
-            font-size: 14px;
-            display: table;
+            animation: slideIn 0.5s ease-out;
         }
 
-        th {
-            background-color: #005caa;
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
             color: white;
-            padding: 8px;
-            font-size: 14px;
-        }
-
-        td {
-            padding: 6px;
-            text-align: center;
-        }
-
-        /* Mobile cards styles */
-        .mobile-card {
-            display: none;
-            background: white;
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
-       
-        }
-
-        .mobile-card .card-row {
+            padding: 30px;
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
+            align-items: center;
+            box-shadow: var(--shadow-md);
         }
 
-        .mobile-card .card-label {
-            font-weight: 600;
-            color: #005caa;
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
         }
 
-        .mobile-card .card-value {
-            text-align: right;
-            padding-right: 10px;
-
+        .header img {
+            height: 50px;
+            filter: brightness(0) invert(1);
         }
 
-        .mobile-card input, 
-        .mobile-card select {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
         }
 
-        .mobile-card .action-buttons {
+        .content {
+            padding: 30px;
+        }
+
+        /* Card Styles for Portrait/Mobile */
+        .calculator-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s ease;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .calculator-card:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .card-header {
             display: flex;
             justify-content: space-between;
-            margin-top: 10px;
-        }
-
-        /* Button styles */
-        .addRowBtn, .removeRowBtn {
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
             cursor: pointer;
-            font-size: 18px;
+            user-select: none;
+        }
+
+        .card-header:hover {
+            opacity: 0.8;
+        }
+
+        .card-header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .card-number {
+            background: var(--primary-color);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .card-summary {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .card-summary-row {
+            display: flex;
+            gap: 15px;
+            font-size: 13px;
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .summary-label {
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .summary-value {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        .toggle-icon {
+            width: 24px;
+            height: 24px;
+            color: var(--text-secondary);
+            transition: transform 0.3s ease;
+            font-size: 20px;
             font-weight: bold;
-            padding: 6px 12px;
+            flex-shrink: 0;
+        }
+
+        .toggle-icon.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        @media (max-width: 640px) {
+            .card-summary-row {
+                flex-direction: column;
+                gap: 4px;
+            }
+        }
+
+        .card-content {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+
+        .card-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .input-group input,
+        .input-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            background: white;
+        }
+
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .input-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background: #f9fafb;
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+        }
+
+        .result-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .result-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
             border: none;
-            border-radius: 5px;
-            transition: 0.3s ease-in-out;
+            border-radius: var(--radius-sm);
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
 
-        .addRowBtn {
-            background-color: green;
+        .btn-primary {
+            background: var(--secondary-color);
             color: white;
+            flex: 1;
         }
 
-        .removeRowBtn {
-            background-color: red;
+        .btn-primary:hover {
+            background: #b91c1c;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-danger {
+            background: #6b7280;
             color: white;
+            flex: 1;
         }
 
-        .addRowBtn:hover, .removeRowBtn:hover {
-            transform: scale(1.1);
+        .btn-danger:hover {
+            background: #4b5563;
+            transform: translateY(-1px);
+            box-shadow: var(--shadow-md);
         }
 
-        /* Rotate message */
-        .rotate-message {
-            display: none;
+        .btn:active {
+            transform: translateY(0);
         }
 
-        /* Results section */
-        .result {
-          
-            font-weight: bold; margin-top: 20px; 
+        /* Results Summary */
+        .results-summary {
+            background: linear-gradient(135deg, #fef2f2 0%, #fce7e7 100%);
+            border-radius: var(--radius-md);
+            padding: 30px;
+            margin-top: 30px;
+            box-shadow: var(--shadow-md);
         }
 
-        /* Responsive styles */
-        @media screen and (max-width: 920px) {
-            table {
-                display: none;
+        .results-summary h2 {
+            color: var(--primary-dark);
+            font-size: 22px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .results-summary h3 {
+            color: var(--primary-color);
+            font-size: 18px;
+            margin-top: 24px;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .results-summary p {
+            padding: 10px 16px;
+            background: white;
+            border-radius: var(--radius-sm);
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .results-summary p strong {
+            color: var(--primary-dark);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .footer img {
+            height: 60px;
+            opacity: 0.8;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.8;
+            }
+        }
+
+        .btn:hover {
+            animation: pulse 1s infinite;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 640px) {
+            body {
+                padding: 10px;
             }
 
-            .mobile-card {
-                display: block;
-            }
-
-            .container {
-               padding: 10px;
-            }
-        }
-
-        @media screen and (min-width: 921px) {
-            .mobile-card {
-                display: none !important;
-            }
-        }
-
-        @media screen and (orientation: portrait) {
-            .container {
-                display: none;
-            }
-
-            .rotate-message {
-                display: block;
+            .header {
+                padding: 20px;
+                flex-direction: column;
                 text-align: center;
-                font-size: 20px;
-                margin-top: 50px;
+                gap: 15px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .calculator-card {
+                padding: 20px;
+            }
+
+            .input-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .results-summary {
+                padding: 20px;
             }
         }
 
-        @media screen and (orientation: landscape) {
-            .rotate-message {
-                display: none;
-            }
-
-            .container {
-                display: block;
-             
-            
-            }
-
-            table {
-                font-size: 12px;
-            }
-
-            th, td {
-                padding: 5px;
+        @media (min-width: 768px) {
+            .input-grid-desktop {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 15px;
             }
         }
 
-        /* Additional mobile styles */
-        @media (max-width: 768px) {
-            .container {
-               width: 100%; 
-               padding: 10px;
-            }
+        /* Loading state */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
 
-            table {
-                font-size: 12px;
-            }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
 
-            th, td {
-                padding: 5px;
-            }
+        /* Icon styles */
+        .icon {
+            width: 20px;
+            height: 20px;
         }
     </style>
 </head>
 <body>
-    <div class="rotate-message">
-        Γυρίστε το σε landscape για καλύτερη εμπειρία.
-    </div>
-
     <div class="container">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="margin: 0;">Υπολογιστής Πλακιδίων</h2>
-            <img src="logo.svg" alt="Logo" style="width: 150px;">
-        </div>
-       
-        <!-- Desktop Table -->
-        <table>
-            <thead>
-                <tr>
-                    <th>Ύψος (m)</th>
-                    <th>Πλάτος (m)</th>
-                    <th>Διάσταση πλακιδίου (cm)</th>
-                    <th>Ποσότητα</th>
-                    <th>Τύπος</th>
-                    <th>Χιλιοστά Στόκου</th>
-                    <th>Τετραγωνικά μέτρα</th>
-                    <th>Προσαρμοσμένα ΤM</th>
-                    <th>Στόκος (kg)</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="tileTable">
-                <tr>
-                    <td><input type="number" class="height" step="0.01"></td>
-                    <td><input type="number" class="width" step="0.01"></td>
-                    <td>
-                        <select class="tileSize">
-                            <option value="30x30">30x30</option>
-                            <option value="33x33">33x33</option>
-                            <option value="40x40">40x40</option>
-                            <option value="60x60">60x60</option>
-                            <option value="90x90">90x90</option>
-                            <option value="60x120">60x120</option>
-                            <option value="120x120">120x120</option>
-                        </select>
-                    </td>
-                    <td><input type="number" class="quantity" value="1"></td>
-                    <td>
-                        <select class="floorwall">
-                            <option value="wall">Τοίχος</option>
-                            <option value="floor" selected>Δάπεδο</option> 
-                        </select>
-                    </td>
-                    <td><input type="number" class="stokos" step="0.01"></td>
-                    <td class="squareMeters">0.00</td>
-                    <td class="adjustedSquareMeters">0.00</td>
-                    <td class="rowStokos">0.00</td>                
-                    <td><span class="addRowBtn" onclick="addRow()">+</span></td>
-                </tr>
-            </tbody>
-        </table>
-      
-        <!-- Mobile Cards -->
-        <div id="mobileCards">
-            <div class="mobile-card">
-                <div class="card-row">
-                    <div class="card-label">Ύψος (m):</div>
-                    <div class="card-value"><input type="number" class="height" step="0.01"></div>
-                </div>
-                <div class="card-row">
-                    <div class="card-label">Πλάτος (m):</div>
-                    <div class="card-value"><input type="number" class="width" step="0.01"></div>
-                </div>
-                <div class="card-row">
-                    <div class="card-label">Διάσταση:</div>
-                    <div class="card-value">
-                        <select class="tileSize">
-                            <option value="30x30">30x30</option>
-                            <option value="33x33">33x33</option>
-                            <option value="40x40">40x40</option>
-                            <option value="60x60">60x60</option>
-                            <option value="90x90">90x90</option>
-                            <option value="60x120">60x120</option>
-                            <option value="120x120">120x120</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="card-row">
-                    <div class="card-label">Ποσότητα:</div>
-                    <div class="card-value"><input type="number" class="quantity" value="1"></div>
-                </div>
-                <div class="card-row">
-                    <div class="card-label">Τύπος:</div>
-                    <div class="card-value">
-                        <select class="floorwall">
-                            <option value="wall">Τοίχος</option>
-                            <option value="floor" selected>Δάπεδο</option> 
-                        </select>
-                    </div>
-                </div>
-                <div class="card-row">
-                    <div class="card-label">Χιλιοστά Στόκου:</div>
-                    <div class="card-value"><input type="number" class="stokos" step="0.01"></div>
-                </div>
-                <div class="card-row">
-                    <div class="card-label">Τετραγωνικά μέτρα:</div>
-                    <div class="card-value squareMeters">0.00</div>
-                </div>
-                <div class="card-row">
-                    <div class="card-label">Προσαρμοσμένα ΤM:</div>
-                    <div class="card-value adjustedSquareMeters">0.00</div>
-                </div>
-                <div class="card-row">
-                    <div class="card-label">Στόκος (kg):</div>
-                    <div class="card-value rowStokos">0.00</div>
-                </div>
-                <div class="action-buttons">
-                    <span class="removeRowBtn" onclick="removeRow(this)">X</span>
-                    <span class="addRowBtn" onclick="addRow()">+</span>
-                </div>
+        <div class="header">
+            <h1>🏗️ Υπολογιστής Πλακιδίων</h1>
+            <div class="header-actions">
+                <img src="logo.svg" alt="Logo" onerror="this.style.display='none'">
             </div>
         </div>
-        
-        <div class="result" id="totalOutput"></div>
 
-        <div class="image-container">
-            <img src="logo.svg" alt="Logo">
+        <div class="content">
+            <div id="calculatorCards">
+                <!-- Initial Card -->
+                <div class="calculator-card">
+                    <div class="card-header" onclick="toggleCard(this)">
+                        <div class="card-header-left">
+                            <div class="card-number">1</div>
+                            <div class="card-summary">
+                                <div class="card-summary-row">
+                                    <div class="summary-item">
+                                        <span class="summary-label">Διάσταση:</span>
+                                        <span class="summary-value card-tilesize">-</span>
+                                    </div>
+                                    <div class="summary-item">
+                                        <span class="summary-label">TM:</span>
+                                        <span class="summary-value card-sqm">0.00 m²</span>
+                                    </div>
+                                </div>
+                                <div class="card-summary-row">
+                                    <div class="summary-item">
+                                        <span class="summary-label">Προσαρμ.:</span>
+                                        <span class="summary-value card-adj-sqm">0.00 m²</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="toggle-icon">▼</div>
+                    </div>
+
+                    <div class="card-content">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Ύψος (m)</label>
+                            <input type="number" class="height" step="0.01" placeholder="0.00">
+                        </div>
+                        <div class="input-group">
+                            <label>Πλάτος (m)</label>
+                            <input type="number" class="width" step="0.01" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Διάσταση πλακιδίου</label>
+                            <select class="tileSize">
+                                <option value="30x30">30x30 cm</option>
+                                <option value="33x33">33x33 cm</option>
+                                <option value="40x40">40x40 cm</option>
+                                <option value="60x60">60x60 cm</option>
+                                <option value="90x90">90x90 cm</option>
+                                <option value="60x120">60x120 cm</option>
+                                <option value="120x120">120x120 cm</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Ποσότητα</label>
+                            <input type="number" class="quantity" value="1" min="1">
+                        </div>
+                    </div>
+
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Τύπος</label>
+                            <select class="floorwall">
+                                <option value="floor" selected>Δάπεδο</option>
+                                <option value="wall">Τοίχος</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Χιλιοστά Στόκου</label>
+                            <input type="number" class="stokos" step="0.01" placeholder="0.00">
+                        </div>
+                    </div>
+
+                    <div class="result-row">
+                        <span class="result-label">Τετραγωνικά μέτρα:</span>
+                        <span class="result-value squareMeters">0.00 m²</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Προσαρμοσμένα ΤM:</span>
+                        <span class="result-value adjustedSquareMeters">0.00 m²</span>
+                    </div>
+                    <div class="result-row">
+                        <span class="result-label">Στόκος:</span>
+                        <span class="result-value rowStokos">0.00 kg</span>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button class="btn btn-danger" onclick="removeCard(this)" style="display: none;">
+                            ✕ Διαγραφή
+                        </button>
+                        <button class="btn btn-primary" onclick="addCard()">
+                            + Προσθήκη
+                        </button>
+                    </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="results-summary" id="totalOutput">
+                <h2>📊 Συνολικά Αποτελέσματα</h2>
+                <p style="text-align: center; color: var(--text-secondary);">Προσθέστε δεδομένα για να δείτε τα αποτελέσματα</p>
+            </div>
+        </div>
+
+        <div class="footer">
+            <img src="logo.svg" alt="Logo" onerror="this.style.display='none'">
         </div>
     </div>
 
     <script>
-        // Function to add a new row (both table and card)
-        function addRow() {
-            // Add table row
-            let table = document.getElementById('tileTable');
-            let row = table.insertRow();
-            row.innerHTML = `
-                <td><input type="number" class="height" step="0.01"></td>
-                <td><input type="number" class="width" step="0.01"></td>
-                <td>
-                    <select class="tileSize">
-                        <option value="30x30">30x30</option>
-                        <option value="33x33">33x33</option>
-                        <option value="40x40">40x40</option>
-                        <option value="60x60">60x60</option>
-                        <option value="90x90">90x90</option>
-                        <option value="60x120">60x120</option>
-                        <option value="120x120">120x120</option>
-                    </select>
-                </td>
-                <td><input type="number" class="quantity" value=1></td>
-                <td>
-                    <select class="floorwall">
-                        <option value="floor" selected>Δάπεδο</option> 
-                        <option value="wall">Τοίχος</option>
-                    </select>
-                </td>
-                <td><input type="number" class="stokos" step="0.01"></td>
-                <td class="squareMeters">0.00</td>
-                <td class="adjustedSquareMeters">0.00</td>
-                <td class="rowStokos">0.00</td>
-                <td>
-                    <span class="removeRowBtn" onclick="removeRow(this)">X</span>
-                    <span class="addRowBtn" onclick="addRow()">+</span>
-                </td>
-            `;
-            addEventListeners(); // Reattach event listeners for new row inputs
+        let cardCounter = 1;
+
+        function toggleCard(header) {
+            const card = header.closest('.calculator-card');
+            const content = card.querySelector('.card-content');
+            const icon = header.querySelector('.toggle-icon');
             
-            // Add mobile card
-            let mobileCards = document.getElementById('mobileCards');
-            let card = document.createElement('div');
-            card.className = 'mobile-card';
+            content.classList.toggle('collapsed');
+            icon.classList.toggle('collapsed');
+        }
+
+        function addCard() {
+            cardCounter++;
+            const cardsContainer = document.getElementById('calculatorCards');
+            const card = document.createElement('div');
+            card.className = 'calculator-card';
             card.innerHTML = `
-                <div class="card-row">
-                    <div class="card-label">Ύψος (m):</div>
-                    <div class="card-value"><input type="number" class="height" step="0.01"></div>
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-header-left">
+                        <div class="card-number">${cardCounter}</div>
+                        <div class="card-summary">
+                            <div class="card-summary-row">
+                                <div class="summary-item">
+                                    <span class="summary-label">Διάσταση:</span>
+                                    <span class="summary-value card-tilesize">-</span>
+                                </div>
+                                <div class="summary-item">
+                                    <span class="summary-label">TM:</span>
+                                    <span class="summary-value card-sqm">0.00 m²</span>
+                                </div>
+                            </div>
+                            <div class="card-summary-row">
+                                <div class="summary-item">
+                                    <span class="summary-label">Προσαρμ.:</span>
+                                    <span class="summary-value card-adj-sqm">0.00 m²</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="toggle-icon">▼</div>
                 </div>
-                <div class="card-row">
-                    <div class="card-label">Πλάτος (m):</div>
-                    <div class="card-value"><input type="number" class="width" step="0.01"></div>
+
+                <div class="card-content">
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Ύψος (m)</label>
+                        <input type="number" class="height" step="0.01" placeholder="0.00">
+                    </div>
+                    <div class="input-group">
+                        <label>Πλάτος (m)</label>
+                        <input type="number" class="width" step="0.01" placeholder="0.00">
+                    </div>
                 </div>
-                <div class="card-row">
-                    <div class="card-label">Διάσταση:</div>
-                    <div class="card-value">
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Διάσταση πλακιδίου</label>
                         <select class="tileSize">
-                            <option value="30x30">30x30</option>
-                            <option value="33x33">33x33</option>
-                            <option value="40x40">40x40</option>
-                            <option value="60x60">60x60</option>
-                            <option value="90x90">90x90</option>
-                            <option value="60x120">60x120</option>
-                            <option value="120x120">120x120</option>
+                            <option value="30x30">30x30 cm</option>
+                            <option value="33x33">33x33 cm</option>
+                            <option value="40x40">40x40 cm</option>
+                            <option value="60x60">60x60 cm</option>
+                            <option value="90x90">90x90 cm</option>
+                            <option value="60x120">60x120 cm</option>
+                            <option value="120x120">120x120 cm</option>
                         </select>
                     </div>
+                    <div class="input-group">
+                        <label>Ποσότητα</label>
+                        <input type="number" class="quantity" value="1" min="1">
+                    </div>
                 </div>
-                <div class="card-row">
-                    <div class="card-label">Ποσότητα:</div>
-                    <div class="card-value"><input type="number" class="quantity" value="1"></div>
-                </div>
-                <div class="card-row">
-                    <div class="card-label">Τύπος:</div>
-                    <div class="card-value">
+
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Τύπος</label>
                         <select class="floorwall">
+                            <option value="floor" selected>Δάπεδο</option>
                             <option value="wall">Τοίχος</option>
-                            <option value="floor" selected>Δάπεδο</option> 
                         </select>
                     </div>
+                    <div class="input-group">
+                        <label>Χιλιοστά Στόκου</label>
+                        <input type="number" class="stokos" step="0.01" placeholder="0.00">
+                    </div>
                 </div>
-                <div class="card-row">
-                    <div class="card-label">Χιλιοστά Στόκου:</div>
-                    <div class="card-value"><input type="number" class="stokos" step="0.01"></div>
+
+                <div class="result-row">
+                    <span class="result-label">Τετραγωνικά μέτρα:</span>
+                    <span class="result-value squareMeters">0.00 m²</span>
                 </div>
-                <div class="card-row">
-                    <div class="card-label">Τετραγωνικά μέτρα:</div>
-                    <div class="card-value squareMeters">0.00</div>
+                <div class="result-row">
+                    <span class="result-label">Προσαρμοσμένα ΤM:</span>
+                    <span class="result-value adjustedSquareMeters">0.00 m²</span>
                 </div>
-                <div class="card-row">
-                    <div class="card-label">Προσαρμοσμένα ΤM:</div>
-                    <div class="card-value adjustedSquareMeters">0.00</div>
+                <div class="result-row">
+                    <span class="result-label">Στόκος:</span>
+                    <span class="result-value rowStokos">0.00 kg</span>
                 </div>
-                <div class="card-row">
-                    <div class="card-label">Στόκος (kg):</div>
-                    <div class="card-value rowStokos">0.00</div>
-                </div>
+
                 <div class="action-buttons">
-                    <span class="removeRowBtn" onclick="removeRow(this)">X</span>
-                    <span class="addRowBtn" onclick="addRow()">+</span>
+                    <button class="btn btn-danger" onclick="removeCard(this)">
+                        ✕ Διαγραφή
+                    </button>
+                    <button class="btn btn-primary" onclick="addCard()">
+                        + Προσθήκη
+                    </button>
+                </div>
                 </div>
             `;
-            mobileCards.appendChild(card);
-            
-            addEventListeners(); // Reattach event listeners for new inputs
+            cardsContainer.appendChild(card);
+            addEventListeners();
+            updateCardNumbers();
         }
 
-        // Function to remove a row (both table and card)
-        function removeRow(button) {
-            // Remove table row
-            let row = button.closest('tr');
-            if (row) row.remove();
-            
-            // Remove mobile card
-            let card = button.closest('.mobile-card');
-            if (card) card.remove();
-            
-            calculateTiles(); // Recalculate the remaining rows
+        function removeCard(button) {
+            const card = button.closest('.calculator-card');
+            card.style.animation = 'fadeOut 0.3s ease-out';
+            setTimeout(() => {
+                card.remove();
+                cardCounter--;
+                updateCardNumbers();
+                calculateTiles();
+            }, 300);
         }
 
-        // Function to add event listeners to inputs of each row/card
-        function addEventListeners() {
-            // For table rows
-            let rows = document.querySelectorAll('#tileTable tr');
-            rows.forEach(row => {
-                row.querySelectorAll('input, select').forEach(input => {
-                    input.addEventListener('input', calculateTiles);
-                });
+        function updateCardNumbers() {
+            const cards = document.querySelectorAll('.calculator-card');
+            cards.forEach((card, index) => {
+                card.querySelector('.card-number').textContent = index + 1;
+                const deleteBtn = card.querySelector('.btn-danger');
+                if (cards.length === 1) {
+                    deleteBtn.style.display = 'none';
+                } else {
+                    deleteBtn.style.display = 'flex';
+                }
             });
-            
-            // For mobile cards
-            let cards = document.querySelectorAll('.mobile-card');
+        }
+
+        function addEventListeners() {
+            const cards = document.querySelectorAll('.calculator-card');
             cards.forEach(card => {
                 card.querySelectorAll('input, select').forEach(input => {
                     input.addEventListener('input', calculateTiles);
@@ -470,7 +724,6 @@
             });
         }
 
-        // Update the calculateTiles function to only include selected values in totalOutput
         function calculateTiles() {
             let totalSquareMeters = {};
             let totalReceptors = {};
@@ -479,37 +732,11 @@
             let totalStokos = 0;
             let totalSfines = 0;
 
-            // Process table rows
-            let rows = document.querySelectorAll('#tileTable tr');
-            rows.forEach(row => {
-                let tileSize = row.querySelector('.tileSize').value;
-                let quantity = parseInt(row.querySelector('.quantity').value) || 0;
-                if (tileSize && quantity > 0) {
-                    processCalculation(
-                        row.querySelector('.height'),
-                        row.querySelector('.width'),
-                        row.querySelector('.tileSize'),
-                        row.querySelector('.quantity'),
-                        row.querySelector('.floorwall'),
-                        row.querySelector('.stokos'),
-                        row.querySelector('.squareMeters'),
-                        row.querySelector('.adjustedSquareMeters'),
-                        row.querySelector('.rowStokos'),
-                        totalSquareMeters,
-                        totalReceptors,
-                        (value) => totalGlue += value,
-                        (value) => totalCrosses += value,
-                        (value) => totalStokos += value,
-                        (value) => totalSfines += value
-                    );
-                }
-            });
-
-            // Process mobile cards
-            let cards = document.querySelectorAll('.mobile-card');
+            const cards = document.querySelectorAll('.calculator-card');
             cards.forEach(card => {
-                let tileSize = card.querySelector('.tileSize').value;
-                let quantity = parseInt(card.querySelector('.quantity').value) || 0;
+                const tileSize = card.querySelector('.tileSize').value;
+                const quantity = parseInt(card.querySelector('.quantity').value) || 0;
+                
                 if (tileSize && quantity > 0) {
                     processCalculation(
                         card.querySelector('.height'),
@@ -531,121 +758,137 @@
                 }
             });
 
-            // Display totals
-            let totalOutput = "<h3>Συνολικά τμ ανά διάσταση:</h3>";
-            for (let tileSize in totalSquareMeters) {
-                if (totalSquareMeters[tileSize] > 0) {
-                    totalOutput += `<p>${tileSize}: ${totalSquareMeters[tileSize].toFixed(2)} m²</p>`;
-                }
-            }
-
-            totalOutput += `<h3>Υποδοχείς ανά διάσταση: </h3>`;
-            for (let tileSize in totalReceptors) {
-                if (totalReceptors[tileSize] > 0) {
-                    totalOutput += `<p>${tileSize}: ${Math.ceil(totalReceptors[tileSize])} σακουλάκια</p>`;
-                }
-            }
-
-            totalOutput += `<h3>Παρελκόμενα: </h3>`;
-            totalOutput += `<p>Σφήνες : ${totalSfines} σακουλάκια</p>`;
-            totalOutput += `<p>Κόλλα : ${totalGlue} kg</p>`;
-            totalOutput += `<p>Σταυροί : ${totalCrosses} σακουλάκια</p>`;
-            totalOutput += `<p>Στόκος : ${totalStokos.toFixed(2)} kg</p>`;
-            document.getElementById('totalOutput').innerHTML = totalOutput;
+            displayResults(totalSquareMeters, totalReceptors, totalGlue, totalCrosses, totalStokos, totalSfines);
         }
 
-        // Helper function to process calculations for both table rows and mobile cards
+        function displayResults(totalSquareMeters, totalReceptors, totalGlue, totalCrosses, totalStokos, totalSfines) {
+            let output = '<h2>📊 Συνολικά Αποτελέσματα</h2>';
+            
+            const hasData = Object.keys(totalSquareMeters).length > 0;
+            
+            if (!hasData) {
+                output += '<p style="text-align: center; color: var(--text-secondary);">Προσθέστε δεδομένα για να δείτε τα αποτελέσματα</p>';
+            } else {
+                output += '<h3>Τετραγωνικά Μέτρα ανά Διάσταση</h3>';
+                for (let size in totalSquareMeters) {
+                    if (totalSquareMeters[size] > 0) {
+                        output += `<p><span>${size} cm</span><strong>${totalSquareMeters[size].toFixed(2)} m²</strong></p>`;
+                    }
+                }
+
+                output += '<h3>Υποδοχείς ανά Διάσταση</h3>';
+                for (let size in totalReceptors) {
+                    if (totalReceptors[size] > 0) {
+                        output += `<p><span>${size} cm</span><strong>${Math.ceil(totalReceptors[size])} σακουλάκια</strong></p>`;
+                    }
+                }
+
+                output += '<h3>Παρελκόμενα</h3>';
+                output += `<p><span>Σφήνες</span><strong>${totalSfines} σακουλάκια</strong></p>`;
+                output += `<p><span>Κόλλα</span><strong>${totalGlue} kg</strong></p>`;
+                output += `<p><span>Σταυροί</span><strong>${totalCrosses} σακουλάκια</strong></p>`;
+                output += `<p><span>Στόκος</span><strong>${totalStokos.toFixed(2)} kg</strong></p>`;
+            }
+
+            document.getElementById('totalOutput').innerHTML = output;
+        }
+
         function processCalculation(heightEl, widthEl, tileSizeEl, quantityEl, floorWallEl, stokosEl, 
                                   squareMetersEl, adjustedSquareMetersEl, rowStokosEl,
-                                  totalSquareMeters, totalReceptors, addGlue,addCrosses, addStokos, addSfines) {
-            let height = parseFloat(heightEl.value) || 0;
-            let width = parseFloat(widthEl.value) || 0;
-            let quantity = parseInt(quantityEl.value) || 0;
-            let tileSize = tileSizeEl.value;
-            let stokos = parseFloat(stokosEl.value) || 0;
-            let floorWall = floorWallEl.value;
+                                  totalSquareMeters, totalReceptors, addGlue, addCrosses, addStokos, addSfines) {
+            const height = parseFloat(heightEl.value) || 0;
+            const width = parseFloat(widthEl.value) || 0;
+            const quantity = parseInt(quantityEl.value) || 0;
+            const tileSize = tileSizeEl.value;
+            const stokos = parseFloat(stokosEl.value) || 0;
+            const floorWall = floorWallEl.value;
 
-            let tileArea = height * width; 
-            let rowSquareMeters = quantity * tileArea; 
-            squareMetersEl.innerText = rowSquareMeters.toFixed(2);
+            const tileArea = height * width;
+            const rowSquareMeters = quantity * tileArea;
+            squareMetersEl.textContent = rowSquareMeters.toFixed(2) + ' m²';
 
-            // Adjust square meters based on tile dimension
+            // Update card header summary
+            const card = heightEl.closest('.calculator-card');
+            if (card) {
+                const cardTileSize = card.querySelector('.card-tilesize');
+                const cardSqm = card.querySelector('.card-sqm');
+                const cardAdjSqm = card.querySelector('.card-adj-sqm');
+                
+                if (cardTileSize) cardTileSize.textContent = tileSize + ' cm';
+                if (cardSqm) cardSqm.textContent = rowSquareMeters.toFixed(2) + ' m²';
+            }
+
             let adjustedSquareMeters = rowSquareMeters;
-            if (tileSize === "30x30" || tileSize === "33x33" || tileSize === "40x40" ||  tileSize === "60x60" 
-            || tileSize === "90x90" ) {
-                adjustedSquareMeters *= 1.10; // Add 10%
-            } else if ( tileSize === "60x120" ||  tileSize === "120x120" ) {
-                adjustedSquareMeters *= 1.15; // Add 15%
-            }
-            adjustedSquareMetersEl.innerText = adjustedSquareMeters.toFixed(2);
-
-           // let rowStokos = (rowSquareMeters * (stokos * 0.01) )*1.10;
-            console.log(rowSquareMeters);
-            let rowStokos = (rowSquareMeters * (stokos * 0.1) )*1.10;
-
-            rowStokosEl.innerText = rowStokos.toFixed(2);
-
-            let receptorsPerSquareMeter = 0;
-            if (tileSize === "30x30") {
-                receptorsPerSquareMeter = 44;
-            } else if (tileSize === "40x40") {
-                receptorsPerSquareMeter = 25;
-            } else if (tileSize === "60x120") {
-                receptorsPerSquareMeter = 11;
-            } else if (tileSize === "33x33") {
-                receptorsPerSquareMeter = 37;
-            } else if (tileSize === "120x120" || tileSize === "90x90") {
-                receptorsPerSquareMeter = 10;
-            } else if (tileSize === "60x60") {
-                receptorsPerSquareMeter = 17;
+            if (["30x30", "33x33", "40x40", "60x60", "90x90"].includes(tileSize)) {
+                adjustedSquareMeters *= 1.10;
+            } else if (["60x120", "120x120"].includes(tileSize)) {
+                adjustedSquareMeters *= 1.15;
             }
 
-           // let receptorsNeeded = (adjustedSquareMeters * receptorsPerSquareMeter)/200;
-           let receptorsNeeded = (rowSquareMeters * receptorsPerSquareMeter)/200;
+            const rowStokos = (rowSquareMeters * (stokos * 0.1)) * 1.10;
+            rowStokosEl.textContent = rowStokos.toFixed(2) + ' kg';
 
+            const receptorsPerSquareMeter = {
+                "30x30": 44,
+                "40x40": 25,
+                "60x120": 11,
+                "33x33": 37,
+                "120x120": 10,
+                "90x90": 10,
+                "60x60": 17
+            }[tileSize] || 0;
 
-            // New calculation for floor wall selection
+            let receptorsNeeded = (rowSquareMeters * receptorsPerSquareMeter) / 200;
+
             if (floorWall === "wall") {
-                let [tileWidth, tileHeight] = tileSize.split('x').map(val => parseFloat(val) / 100);
-                let areaOfTile = tileWidth * tileHeight;
-                let packageSize = 1.44;
-
-                let numheight = Math.ceil((height / tileWidth));
-                let numwidth = Math.ceil((width / tileHeight));
-                let numTiles = numheight * numwidth;
-
-                let tilesPerPackage = Math.floor(packageSize / areaOfTile);
-                let numPackages = Math.ceil(numTiles / tilesPerPackage);
-                let totalPackageSquareMeters = numPackages * packageSize;
-                adjustedSquareMeters = totalPackageSquareMeters * quantity;
-
-                rowStokos = (rowSquareMeters * (stokos * 0.1) )*1.10;
-                rowStokosEl.innerText = rowStokos.toFixed(2);
-                adjustedSquareMetersEl.innerText = adjustedSquareMeters.toFixed(2);
+                const [tileWidth, tileHeight] = tileSize.split('x').map(v => parseFloat(v) / 100);
+                const areaOfTile = tileWidth * tileHeight;
+                const packageSize = 1.44;
+                const numheight = Math.ceil(height / tileWidth);
+                const numwidth = Math.ceil(width / tileHeight);
+                const numTiles = numheight * numwidth;
+                const tilesPerPackage = Math.floor(packageSize / areaOfTile);
+                const numPackages = Math.ceil(numTiles / tilesPerPackage);
+                adjustedSquareMeters = numPackages * packageSize * quantity;
             }
-            addGlue(Math.ceil((rowSquareMeters * 7.7)));
-            // console.log(rowSquareMeters);
-            addCrosses(Math.ceil(((rowSquareMeters/ 50 ) * 1.10) ));
-           // console.log(rowSquareMeters/ 50);
-           // console.log(Math.ceil(((rowSquareMeters/ 50 ) * 1.10) ));
-            addStokos(rowStokos); 
 
-            // Υποδοχείς ανα διάσταση
-            if (!totalReceptors[tileSize]) {
-                totalReceptors[tileSize] = 0;
+            adjustedSquareMetersEl.textContent = adjustedSquareMeters.toFixed(2) + ' m²';
+
+            // Update card header adjusted square meters
+            const cardEl = heightEl.closest('.calculator-card');
+            if (cardEl) {
+                const cardAdjSqm = cardEl.querySelector('.card-adj-sqm');
+                if (cardAdjSqm) cardAdjSqm.textContent = adjustedSquareMeters.toFixed(2) + ' m²';
             }
+
+            addGlue(Math.ceil(rowSquareMeters * 7.7));
+            addCrosses(Math.ceil((rowSquareMeters / 50) * 1.10));
+            addStokos(rowStokos);
+
+            if (!totalReceptors[tileSize]) totalReceptors[tileSize] = 0;
             totalReceptors[tileSize] += receptorsNeeded;
+            addSfines(Math.ceil(receptorsNeeded));
 
-            addSfines(Math.ceil(receptorsNeeded));  
-
-            // Σύνολα ανα διάσταση
-            if (!totalSquareMeters[tileSize]) {
-                totalSquareMeters[tileSize] = 0;
-            }
+            if (!totalSquareMeters[tileSize]) totalSquareMeters[tileSize] = 0;
             totalSquareMeters[tileSize] += adjustedSquareMeters;
         }
 
-        // Initialize the first row/card with event listeners
+        // Fade out animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                    transform: scale(1);
+                }
+                to {
+                    opacity: 0;
+                    transform: scale(0.95);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
         addEventListeners();
     </script>
 </body>
